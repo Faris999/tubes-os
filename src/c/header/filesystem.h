@@ -60,3 +60,11 @@ enum fs_retcode {
     FS_W_MAXIMUM_SECTOR_ENTRY = 6,
     FS_W_INVALID_FOLDER       = 7
 };
+
+void writeSector(byte *buffer, int sector_number);
+void readSector(byte *buffer, int sector_number);
+
+void fillMap();
+
+void write(struct file_metadata *metadata, enum fs_retcode *return_code);
+void read(struct file_metadata *metadata, enum fs_retcode *return_code);

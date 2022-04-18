@@ -2,9 +2,6 @@
 
 // Opsional : Tambahkan implementasi kode C
 
-int main() {
-
-}
 
 int div(int a, int b) {
   return a / b;
