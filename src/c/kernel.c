@@ -28,6 +28,18 @@ void handleInterrupt21(int AX, int BX, int CX, int DX) {
     case 0x1:
       readString(BX);
       break;
+    case 0x2:
+      readSector(BX, CX);
+      break;
+    case 0x3:
+      writeSector(BX, CX);
+      break;
+    case 0x4:
+      read(BX, CX);
+      break;
+    case 0x5:
+      write(BX, CX);
+      break;
     default:
       printString("Invalid interrupt");
   }
