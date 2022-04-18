@@ -1,6 +1,6 @@
 // Kernel header
 
-#include "std_datatype.h"
+#include "std_type.h"
 #include "std_lib.h"
 
 // Fungsi bawaan

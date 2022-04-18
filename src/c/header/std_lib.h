@@ -19,6 +19,8 @@ unsigned int strlen(char *string);
 bool strcmp(char *s1, char *s2);
 // Mengembalikan true jika string sama
 
+bool startswith(char *s1, char *s2);
+
 void strcpy(char *dst, char *src);
 // Melakukan penyalinan null terminated string
 
