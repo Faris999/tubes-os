@@ -12,7 +12,7 @@ int main() {
   char buffer[512];
   fillMap();
   makeInterrupt21();
-  // clearScreen();
+  clearScreen();
   
   printString("Hello, dfsdfa");
   readString(buffer);
