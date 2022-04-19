@@ -223,9 +223,6 @@ void write(struct file_metadata *metadata, enum fs_retcode *return_code) {
   node_fs_buffer.nodes[node_index] = node_buffer;
   writeSector(&(node_fs_buffer.nodes[0]), FS_NODE_SECTOR_NUMBER);
   writeSector(&(node_fs_buffer.nodes[32]), FS_NODE_SECTOR_NUMBER + 1);
-
+  
   *return_code = FS_SUCCESS;
-
-  *return_code = FS_SUCCESS;
-
 }

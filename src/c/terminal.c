@@ -6,6 +6,19 @@ void printchar(char a) {
   interrupt(0x10, 0x0e00 + a, 0x0000, 0x0, 0x0);
 }
 
+char* convertHex(int a) {
+  int i;
+  char buf[7];
+  buf[0] = '0';
+  buf[1] = 'x';
+  for (i = 5; i >= 2; i--) {
+    buf[i] = hex[a % 16];
+    a /= 16;
+  }
+  buf[6] = '\0';
+  return buf;
+}
+
 void printHex(int a) {
   int i;
   char buf[5];
