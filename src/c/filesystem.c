@@ -223,6 +223,58 @@ void write(struct file_metadata *metadata, enum fs_retcode *return_code) {
   node_fs_buffer.nodes[node_index] = node_buffer;
   writeSector(&(node_fs_buffer.nodes[0]), FS_NODE_SECTOR_NUMBER);
   writeSector(&(node_fs_buffer.nodes[32]), FS_NODE_SECTOR_NUMBER + 1);
-  
+
+  *return_code = FS_SUCCESS;
+}
+
+void writeFolder(struct file_metadata *metadata, enum fs_retcode *return_code) {
+  struct node_filesystem node_fs_buffer;
+  struct node_entry node_buffer;
+  int i;
+
+  printString("Node name: ");
+  printString(metadata->node_name);
+  printString("\r\nParent index: ");
+  printHex(metadata->parent_index);
+  printString("\r\nFilesize: ");
+  printHex(metadata->filesize);
+  printString("\r\nBuffer: ");
+  printHex(metadata->buffer[0]);
+  printString("\r\n");
+
+  readSector(&(node_fs_buffer.nodes[0]), FS_NODE_SECTOR_NUMBER);
+  readSector(&(node_fs_buffer.nodes[32]), FS_NODE_SECTOR_NUMBER + 1);
+
+  for (i = 0; i < 64; i++) {
+    if (strcmp(metadata->node_name, node_fs_buffer.nodes[i].name)) {
+      if (node_fs_buffer.nodes[i].parent_node_index == metadata->parent_index) {
+        printString("Directory already exists\r\n");
+        *return_code = FS_W_FILE_ALREADY_EXIST;
+        return;
+      }
+    }
+  }
+
+  for (i = 0; i < 64; i++) {
+    if (node_fs_buffer.nodes[i].name[0] == 0) {
+      break;
+    }
+  }
+
+  if (i == 64) {
+    printString("No more space for new directory\r\n");
+    *return_code = FS_W_NOT_ENOUGH_STORAGE;
+    return;
+  }
+
+  node_buffer = node_fs_buffer.nodes[i];
+  node_buffer.parent_node_index = metadata->parent_index;
+  node_buffer.sector_entry_index = FS_NODE_S_IDX_FOLDER;
+  strcpy(node_buffer.name, metadata->node_name);
+  node_fs_buffer.nodes[i] = node_buffer;
+
+  writeSector(&(node_fs_buffer.nodes[0]), FS_NODE_SECTOR_NUMBER);
+  writeSector(&(node_fs_buffer.nodes[32]), FS_NODE_SECTOR_NUMBER + 1); 
+
   *return_code = FS_SUCCESS;
 }

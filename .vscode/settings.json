@@ -1,6 +1,7 @@
 {
     "files.associations": {
         "kernel.h": "c",
-        "filesystem.h": "c"
+        "filesystem.h": "c",
+        "utils.h": "c"
     }
 }
