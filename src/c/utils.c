@@ -99,6 +99,10 @@ void cd(char *dir_name, byte *current_dir) {
   int i;
 
   if (dir_name[0] == 0) {
+    return;
+  }
+
+  if (dir_name[0] == '/') {
     *current_dir = FS_NODE_P_IDX_ROOT;
     return;
   }
