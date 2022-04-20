@@ -50,6 +50,7 @@ void shell() {
   char path_str[128];
   char *arguments[64];
   byte current_dir = FS_NODE_P_IDX_ROOT;
+  int i;
 
   printString("Current directory: ");
   printHex(current_dir);
@@ -63,6 +64,11 @@ void shell() {
     readString(input_buf);
     clear(arguments, 64);
     splitString(input_buf, arguments);
+    printString("arguments: ");
+    for (i = 0; i < 3; i++) {
+      printString(arguments[i]);
+      printString(" ");
+    }
 
     if (strcmp("cd", arguments[0])) {
       cd(arguments[1], &current_dir);
@@ -73,7 +79,7 @@ void shell() {
     } else if (strcmp("cat", arguments[0])) {
       cat(arguments[1], current_dir);
     } else if (strcmp("mv", arguments[0])) {
-      // mv(arguments[1], arguments[2], current_dir);
+      mv(arguments[1], arguments[2], current_dir);
     } else if (strcmp("clear", arguments[0])) {
       clearScreen();
     } else {

@@ -19,6 +19,66 @@ void mkdir(char* dir_name, byte current_dir) {
   printString("\r\n");
 }
 
+void mv(char *src, char *dst, byte current_dir) {
+  struct node_filesystem node_fs_buffer;
+  struct node_entry node_buffer;
+  int i;
+  int src_index;
+  int dst_index;
+  
+  readSector(&(node_fs_buffer.nodes[0]), FS_NODE_SECTOR_NUMBER);
+  readSector(&(node_fs_buffer.nodes[32]), FS_NODE_SECTOR_NUMBER + 1);
+
+  printString("Moving ");
+  printString(src);
+  printString(" to ");
+  printString(dst);
+  printString("\r\n");
+
+  for (i = 0; i < 64; i++) {
+    if (strcmp(src, node_fs_buffer.nodes[i].name)) {
+      if (node_fs_buffer.nodes[i].parent_node_index == current_dir) {
+        src_index = i;
+        break;
+      }
+    }
+  }
+
+  if (i == 64) {
+    printString("\r\nSource file not found\r\n");
+    return;
+  }
+
+  for (i = 0; i < 64; i++) {
+    if (strcmp(dst, node_fs_buffer.nodes[i].name)) {
+      if (node_fs_buffer.nodes[i].parent_node_index == current_dir) {
+        if (node_fs_buffer.nodes[i].sector_entry_index == FS_NODE_S_IDX_FOLDER) {
+          dst_index = i;
+          break;
+        } else {
+          printString("\r\nDestination file already exist\r\n");
+          return;
+        }
+      }
+    }
+  }
+
+  node_buffer = node_fs_buffer.nodes[src_index];
+
+  if (i == 64) {
+    // Rename file
+    strcpy(node_buffer.name, dst);
+  } else {
+    node_buffer.parent_node_index = dst_index;
+  }
+  
+  node_fs_buffer.nodes[src_index] = node_buffer;
+  writeSector(&(node_fs_buffer.nodes[0]), FS_NODE_SECTOR_NUMBER);
+  writeSector(&(node_fs_buffer.nodes[32]), FS_NODE_SECTOR_NUMBER + 1);
+
+  
+}
+
 void cat(char *file_name, byte current_dir) {
   struct file_metadata metadata;
   enum fs_retcode return_code;
