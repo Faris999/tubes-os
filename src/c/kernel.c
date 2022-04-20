@@ -59,13 +59,21 @@ void shell() {
     printString("OS@IF2230:");
     printCWD(path_str, current_dir);
     printString("$ ");
+    clear(input_buf, 64);
     readString(input_buf);
+    clear(arguments, 64);
     splitString(input_buf, arguments);
 
     if (strcmp("cd", arguments[0])) {
       cd(arguments[1], &current_dir);
-    } else if (startswith("mkdir", arguments[0])) {
+    } else if (strcmp("mkdir", arguments[0])) {
       mkdir(arguments[1], current_dir);
+    } else if (strcmp("ls", arguments[0])) { 
+      ls(arguments[1], current_dir);
+    } else if (strcmp("cat", arguments[0])) {
+      cat(arguments[1], current_dir);
+    } else if (strcmp("mv", arguments[0])) {
+      // mv(arguments[1], arguments[2], current_dir);
     } else {
       printString("Unknown command\r\n");
     }

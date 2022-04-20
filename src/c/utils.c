@@ -19,6 +19,48 @@ void mkdir(char* dir_name, byte current_dir) {
   printString("\r\n");
 }
 
+void ls(char *dir_name, byte current_dir) {
+  struct node_filesystem node_fs_buffer;
+  int i;
+
+  printString("Listing directory ");
+  printString(dir_name);
+  printString("\r\n");
+
+  readSector(&(node_fs_buffer.nodes[0]), FS_NODE_SECTOR_NUMBER);
+  readSector(&(node_fs_buffer.nodes[32]), FS_NODE_SECTOR_NUMBER + 1);
+
+  if (dir_name[0] != '\0') {
+    for (i = 0; i < 64; i++) {
+      if (strcmp(dir_name, node_fs_buffer.nodes[i].name)) {
+        if (node_fs_buffer.nodes[i].sector_entry_index == FS_NODE_S_IDX_FOLDER) {
+          if (node_fs_buffer.nodes[i].parent_node_index == current_dir) {
+            current_dir = i;
+            break;
+          }
+        } else {
+          printString("Not a directory\r\n");
+          return;
+        }
+      }
+    }
+  }
+
+  if (i == 64) {
+    printString("Directory not found\r\n");
+    return;
+  }
+
+  for (i = 0; i < 64; i++) {
+    if (node_fs_buffer.nodes[i].parent_node_index == current_dir) {
+      if (node_fs_buffer.nodes[i].name[0] != '\0') {
+        printString(node_fs_buffer.nodes[i].name);
+        printString("\r\n");
+      }
+    }
+  }
+}
+
 void cd(char *dir_name, byte *current_dir) {
   struct node_filesystem node_fs_buffer;
   struct node_entry node_buffer;
