@@ -74,6 +74,8 @@ void shell() {
       cat(arguments[1], current_dir);
     } else if (strcmp("mv", arguments[0])) {
       // mv(arguments[1], arguments[2], current_dir);
+    } else if (strcmp("clear", arguments[0])) {
+      clearScreen();
     } else {
       printString("Unknown command\r\n");
     }

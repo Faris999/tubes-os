@@ -19,6 +19,38 @@ void mkdir(char* dir_name, byte current_dir) {
   printString("\r\n");
 }
 
+void cat(char *file_name, byte current_dir) {
+  struct file_metadata metadata;
+  enum fs_retcode return_code;
+  char buffer[8192];
+  int i;
+
+  metadata.filesize = 0;
+  metadata.node_name = file_name;
+  metadata.parent_index = current_dir;
+  metadata.buffer = buffer;
+  // printString("Reading file ");
+  // printString(file_name);
+  // printString("\r\n");
+  read(&metadata, &return_code);
+  // printString("Return code: ");
+  // printHex(return_code);
+  // printString("\r\n");
+
+  for (i = 0; i < metadata.filesize; i++) {
+    if (buffer[i] == '\0') {
+      break;
+    }
+    if (buffer[i] == '\n') {
+      printchar('\r');
+    }
+    printchar(buffer[i]);
+  }
+  // printString("file size: ");
+  // printHex(metadata.filesize);
+  printString("\r\n");
+}
+
 void ls(char *dir_name, byte current_dir) {
   struct node_filesystem node_fs_buffer;
   int i;
