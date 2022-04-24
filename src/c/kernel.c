@@ -8,6 +8,7 @@
 #include "header/terminal.h"
 #include "header/filesystem.h"
 #include "header/utils.h"
+#include "header/testing.h"
 
 int main() {
   int i;
@@ -83,6 +84,8 @@ void shell() {
       mv(arguments[1], arguments[2], current_dir);
     } else if (strcmp("clear", arguments[0])) {
       clearScreen();
+    } else if (strcmp("test", arguments[0])) {
+      test();
     } else {
       printString("Unknown command\r\n");
     }
