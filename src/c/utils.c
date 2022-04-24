@@ -25,6 +25,18 @@ void mv(char *src, char *dst, byte current_dir) {
   int i;
   int src_index;
   int dst_index;
+  bool rename = true;
+  bool move_to_folder = false;
+
+  if (strlen(src) == 0) {
+    printString("Source file name is empty\r\n");
+    return;
+  }
+
+  if (strlen(dst) == 0) {
+    printString("Destination file name is empty\r\n");
+    return;
+  }
   
   readSector(&(node_fs_buffer.nodes[0]), FS_NODE_SECTOR_NUMBER);
   readSector(&(node_fs_buffer.nodes[32]), FS_NODE_SECTOR_NUMBER + 1);
@@ -44,31 +56,50 @@ void mv(char *src, char *dst, byte current_dir) {
     }
   }
 
+  node_buffer = node_fs_buffer.nodes[src_index];
+
   if (i == 64) {
     printString("\r\nSource file not found\r\n");
     return;
   }
 
-  for (i = 0; i < 64; i++) {
-    if (strcmp(dst, node_fs_buffer.nodes[i].name)) {
-      if (node_fs_buffer.nodes[i].parent_node_index == current_dir) {
-        if (node_fs_buffer.nodes[i].sector_entry_index == FS_NODE_S_IDX_FOLDER) {
-          dst_index = i;
-          break;
-        } else {
-          printString("\r\nDestination file already exist\r\n");
-          return;
+  if (dst[0] == '/') {
+    dst_index = FS_NODE_P_IDX_ROOT;
+    dst = dst + 1;
+    move_to_folder = true;
+    if (strlen(dst) == 0) {
+      rename = false;
+    }
+  } else if (startswith(dst, "../")) {
+    // Move to parent
+    dst_index = node_buffer.parent_node_index;
+    for (i = 0; i < 64; i++) {
+
+    }
+  } else {
+      for (i = 0; i < 64; i++) {
+      if (strcmp(dst, node_fs_buffer.nodes[i].name)) {
+        if (node_fs_buffer.nodes[i].parent_node_index == current_dir) {
+          if (node_fs_buffer.nodes[i].sector_entry_index == FS_NODE_S_IDX_FOLDER) {
+            dst_index = i;
+            rename = false;
+            move_to_folder = true;
+            break;
+          } else {
+            printString("\r\nDestination file already exist\r\n");
+            return;
+          }
         }
       }
     }
   }
 
-  node_buffer = node_fs_buffer.nodes[src_index];
 
-  if (i == 64) {
+  if (rename) {
     // Rename file
     strcpy(node_buffer.name, dst);
-  } else {
+  } 
+  if (move_to_folder) {
     node_buffer.parent_node_index = dst_index;
   }
   
@@ -113,11 +144,13 @@ void cat(char *file_name, byte current_dir) {
 
 void ls(char *dir_name, byte current_dir) {
   struct node_filesystem node_fs_buffer;
-  int i;
+  int i = 0;
 
   printString("Listing directory ");
   printString(dir_name);
-  printString("\r\n");
+  printString(" (");
+  printHex(current_dir);
+  printString(")\r\n");
 
   readSector(&(node_fs_buffer.nodes[0]), FS_NODE_SECTOR_NUMBER);
   readSector(&(node_fs_buffer.nodes[32]), FS_NODE_SECTOR_NUMBER + 1);
