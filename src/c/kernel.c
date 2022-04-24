@@ -69,6 +69,7 @@ void shell() {
       printString(arguments[i]);
       printString(" ");
     }
+    printString("\r\n");
 
     if (strcmp("cd", arguments[0])) {
       cd(arguments[1], &current_dir);
