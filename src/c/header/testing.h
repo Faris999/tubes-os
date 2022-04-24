@@ -1,6 +1,10 @@
 #include "std_type.h"
 
 void test();
+void testcaseA();
+void testcaseB();
+void testcaseC();
+void testcaseD();
 
 void test_rename();
 void test_mkdir();
