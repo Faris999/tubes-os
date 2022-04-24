@@ -19,6 +19,17 @@ char* convertHex(int a) {
   return buf;
 }
 
+void printInt(int a) {
+  int i;
+  char buf[6];
+  for (i = 4; i >= 0; i--) {
+    buf[i] = hex[mod(a, 10)];
+    a /= 10;
+  }
+  buf[5] = '\0';
+  printString(buf);
+}
+
 void printHex(int a) {
   int i;
   char buf[5];

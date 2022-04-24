@@ -9,7 +9,7 @@ int main() {
   makeInterrupt21();
   clearScreen();
   
-  testcaseC();
+  testcaseA();
   while (true);
 }
 
