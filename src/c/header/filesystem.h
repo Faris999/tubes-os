@@ -42,6 +42,7 @@ struct file_metadata {
     byte *buffer;
     char *node_name;
     byte parent_index;
+    byte node_index;
     unsigned int filesize;
 };
 
@@ -69,3 +70,13 @@ void fillMap();
 void write(struct file_metadata *metadata, enum fs_retcode *return_code);
 void writeFolder(struct file_metadata *metadata, enum fs_retcode *return_code);
 void read(struct file_metadata *metadata, enum fs_retcode *return_code);
+
+void loadFilesystems(struct node_filesystem *node_fs_buffer,
+                     struct sector_filesystem *sector_fs_buffer);
+void loadNode(struct node_filesystem *node_fs_buffer);
+void loadSector(struct sector_filesystem *sector_fs_buffer);
+void saveNode(struct node_filesystem *node_fs_buffer);
+void saveSector(struct sector_filesystem *sector_fs_buffer);
+
+bool file_exists(char *filename, byte location);
+enum fs_retcode get_node(struct file_metadata *metadata);

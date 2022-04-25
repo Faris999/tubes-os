@@ -35,10 +35,10 @@ bool strcmp(char *s1, char *s2) {
   return false;
 }
 
-bool startswith(char *s1, char *s2) {
+bool startswith(char *prefix, char *s2) {
   int i;
-  for (i = 0; i < strlen(s1); i++) {
-    if (s1[i] != s2[i]) {
+  for (i = 0; i < strlen(prefix); i++) {
+    if (prefix[i] != s2[i]) {
       return false;
     }
   }
