@@ -3,6 +3,32 @@
 #include "header/filesystem.h"
 #include "header/kernel.h"
 
+void cp(char *src, char *dst, byte current_dir) {
+  struct file_metadata metadata;
+  enum fs_retcode return_code;
+
+  metadata.node_name = src;
+  metadata.parent_index = current_dir;
+
+  printString("cp");
+  // Get metadata of src
+  read(&metadata, &return_code);
+   
+
+
+  if (return_code == FS_SUCCESS) {
+    printString("Metadata: ");
+    printHex(metadata.filesize);
+    printString("\r\n");
+    printHex(metadata.node_name);
+    printString("\r\n");
+    metadata.node_name = dst;
+    write(&metadata, &return_code);
+  } else {
+    printString("File not found\r\n");
+  }
+}
+
 void mkdir(char* dir_name, byte current_dir) {
   struct file_metadata metadata;
   enum fs_retcode return_code;

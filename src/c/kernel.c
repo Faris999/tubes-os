@@ -81,6 +81,9 @@ void shell() {
       cat(arguments[1], current_dir);
     } else if (strcmp("mv", arguments[0])) {
       mv(arguments[1], arguments[2], current_dir);
+    } else if (strcmp("cp", arguments[0])) {
+      printString("cp");
+      cp(arguments[1], arguments[2], current_dir);
     } else if (strcmp("clear", arguments[0])) {
       clearScreen();
     } else {
