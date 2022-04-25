@@ -8,7 +8,7 @@
 
 bits 16
 KSEG    equ 0x1000    ; Lokasi segment eksekusi kernel pada memory = 0x1000
-KSIZE   equ 15        ; Ukuran kernel                              = 15 sektor
+KSIZE   equ 31        ; Ukuran kernel                              = 15 sektor
 KSTART  equ 1         ; Lokasi sektor kernel pada drive            = sektor 1
 
 
