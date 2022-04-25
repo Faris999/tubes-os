@@ -22,6 +22,6 @@ stdlib:
 	# Opsional
 	bcc -ansi -c -o out/std_lib.o src/c/std_lib.c
 run:
-	sudo bochs -f src/config/if2230.config
+	echo "c" | sudo bochs -f src/config/if2230.config
 
 build-run: all run
