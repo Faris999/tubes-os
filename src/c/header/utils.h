@@ -1,7 +1,6 @@
 #include "std_type.h"
 
 void splitString(char* string, char* return_array[]);
-void createDir(char *dir_name, byte current_dir);
 void mkdir(char *dir_name, byte current_dir);
 void cd(char *dir_name, byte *current_dir);
 void ls(char *dir_name, byte current_dir);
