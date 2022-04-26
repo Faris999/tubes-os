@@ -4,7 +4,7 @@ OBJ := out
 SOURCES = $(wildcard $(SRC)/*.c)
 OBJECTS = $(patsubst $(SRC)/%.c, $(OBJ)/%.o, $(SOURCES))
 
-.PHONY: all tc_gen
+.PHONY: all tc_gen test
 
 # Makefile
 all: diskimage bootloader kernel
@@ -27,7 +27,10 @@ tc_gen:
 	cd tc_gen && gcc tc_gen.c tc_lib -o tc_gen
 	mv tc_gen/tc_gen out/
 	cp -r tc_gen/file_src out/
+test%: all 
+	python3 ./src/python/fill_map.py
+	cd out && ./tc_gen $(patsubst test%, %, $@)
+	$(MAKE) run
 run:
 	echo "c" | sudo bochs -f src/config/if2230.config
-
 build-run: all run
