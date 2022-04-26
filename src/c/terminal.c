@@ -14,7 +14,13 @@ void printchar(char a) {
 }
 
 void printCharColor(char a, byte color) {
-  if (a == '\r') {
+  if (a == '\b') {
+    if (cursor_x > 0) {
+      cursor_x--;
+      moveCursor();
+      interrupt(0x10, 0x0900 + ' ', color, 0x1, 0x0);
+    }
+  } else if (a == '\r') {
     cursor_x = 0;
   } else if (a == '\n') {
     cursor_y++;
@@ -86,8 +92,7 @@ void readString(char *string) {
     }
     if (AL == 0x8 && i > 0) {
       string[--i] = 0x0;
-      printchar(0x8);
-      interrupt(0x10, 0x0a20, 0x0, 0x1, 0x0);
+      printchar(0x8); 
     }
     if (AL == 0xd) {
       printchar(0xd);
