@@ -1,9 +1,40 @@
 #include "header/terminal.h"
 
-
 char hex[17] = "0123456789ABCDEF";
+int cursor_x = 0;
+int cursor_y = 0;
+
+void moveCursor() {
+  interrupt(0x10, 0x0200, 0x0000, 0x0000, cursor_y << 8 | cursor_x);
+}
+
 void printchar(char a) {
-  interrupt(0x10, 0x0e00 + a, 0x0000, 0x0, 0x0);
+  // interrupt(0x10, 0x0900 + a, 0x000A, 0x1, 0x0);
+  printCharColor(a, 0x0F);
+}
+
+void printCharColor(char a, byte color) {
+  if (a == '\r') {
+    cursor_x = 0;
+  } else if (a == '\n') {
+    cursor_y++;
+  } else if (a >= ' ') {
+    interrupt(0x10, 0x0900 + a, color, 0x1, 0x0);
+    cursor_x++;
+  }
+  
+
+  if (cursor_x >= 80) {
+    cursor_x = 0;
+    cursor_y++;
+  }
+
+  if (cursor_y >= 25) {
+    cursor_y = 24;
+    interrupt(0x10, 0x0601, 0x01, 0x00, 0x1950);
+  }
+
+  moveCursor();
 }
 
 char* convertHex(int a) {
@@ -32,9 +63,14 @@ void printHex(int a) {
 }
 
 void printString(char *string) {
+  printStringColor(string, 0x0F);
+}
+
+void printStringColor(char *string, byte color) {
   int i;
   for (i = 0; i < strlen(string); i++) {
-    interrupt(0x10, 0x0e00 + string[i], 0x0000, 0x0, 0x0);
+    // interrupt(0x10, 0x0e00 + string[i], 0x0000, 0x0, 0x0);
+    printCharColor(string[i], color);
   }
 }
 
@@ -77,4 +113,6 @@ void clearScreen() {
   //interrupt(0x10, 0x0003, 0x00, 0x00);
   // move cursor to top left
   interrupt(0x10, 0x0200, 0x03, 0x0, 0x0000);
+  cursor_x = 0;
+  cursor_y = 0;
 }
