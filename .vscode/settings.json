@@ -3,5 +3,6 @@
         "kernel.h": "c",
         "filesystem.h": "c",
         "utils.h": "c"
-    }
+    },
+    "todo-tree.tree.showCountsInTree": true
 }

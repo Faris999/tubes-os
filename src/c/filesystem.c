@@ -41,6 +41,7 @@ void fillMap() {
   readSector(&map_fs_buffer, FS_MAP_SECTOR_NUMBER);
 
   // Fill map
+  // TODO: Balikin lagi jadi 15 kalo udah cleanup
   for (i = 0; i <= 31; i++) {
     map_fs_buffer.is_filled[i] = true;
   }

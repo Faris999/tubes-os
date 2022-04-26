@@ -10,7 +10,6 @@ void makeInterrupt21();
 void handleInterrupt21(int AX, int BX, int CX, int DX);
 
 
-// TODO : Implementasikan
 
 
 void shell();
