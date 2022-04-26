@@ -209,7 +209,7 @@ void write(struct file_metadata *metadata, enum fs_retcode *return_code) {
       map_fs_buffer.is_filled[i] = 1;
       sector_entry_buffer.sector_numbers[j] = i;
       j++;
-      writeSector(&(metadata->buffer[written + (512 * i)]), i);
+      writeSector(&(metadata->buffer[written]), i);
       written += 512;
       if (written >= metadata->filesize) {
         break;
