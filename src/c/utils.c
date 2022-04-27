@@ -5,11 +5,6 @@
 
 char *UNKNOWN_ERROR = "Unknown error";
 
-// void initializeConstants() {
-//   // Initialize constants
-//   UNKNOWN_ERROR = "Unknown error";
-// }
-
 void cp(char *src, char *dst, byte current_dir) {
   struct file_metadata metadata;
   enum fs_retcode return_code;
@@ -320,22 +315,18 @@ void get_children(byte current_dir, struct node_entry *node_buffer) {
 }
 
 void ls(char *dir_name, byte current_dir) {
-  struct node_filesystem node_fs_buffer;
   struct file_metadata metadata;
   struct node_entry node_buffer[64];
+  enum fs_retcode return_code;
   byte color;
-  int i = 0;
+  int i = 0; 
 
-  loadNode(&node_fs_buffer);
-
-  // metadata = (struct file_metadata) {
-  //   .node_name = dir_name,
-  //   .parent_index = current_dir
-  // };
-
-  // if (dir_name[0] != '\0') {
-  //   read(())  
-  // }
+  if (dir_name[0] != '\0') {
+    metadata.parent_index = current_dir;
+    metadata.node_name = dir_name;
+    get_node(&metadata);
+    current_dir = metadata.node_index;
+  }
 
   if (i == 64) {
     println("Directory not found");
@@ -360,7 +351,6 @@ void ls(char *dir_name, byte current_dir) {
 
 void cd(char *dir_name, byte *current_dir) {
   struct node_filesystem node_fs_buffer;
-  struct node_entry node_buffer;
   int i;
 
   if (dir_name[0] == 0) {
@@ -372,13 +362,13 @@ void cd(char *dir_name, byte *current_dir) {
     return;
   }
 
-  readSector(&(node_fs_buffer.nodes[0]), FS_NODE_SECTOR_NUMBER);
-  readSector(&(node_fs_buffer.nodes[32]), FS_NODE_SECTOR_NUMBER + 1);
+  if (*current_dir == FS_NODE_P_IDX_ROOT && strcmp(dir_name, "..")) {
+    return;
+  }
+
+  loadNode(&node_fs_buffer);
   
-  if (strcmp(dir_name, "..")) {
-    if (*current_dir == FS_NODE_P_IDX_ROOT) {
-      return;
-    }
+  if (strcmp(dir_name, "..")) { 
     *current_dir = node_fs_buffer.nodes[*current_dir].parent_node_index;
     return;
   }
@@ -392,11 +382,7 @@ void cd(char *dir_name, byte *current_dir) {
     }
   }
 
-  if (i == 64) {
-    println("Directory not found");
-    return;
-  }
-
+  println("Directory not found");
 }
 
 // Create a function that will split a string into an array of strings
