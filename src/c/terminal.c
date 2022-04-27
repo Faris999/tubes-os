@@ -5,6 +5,11 @@ char *NEWLINE = "\r\n";
 int cursor_x = 0;
 int cursor_y = 0;
 
+void setCursorPosition(int x, int y) {
+    cursor_x = x;
+    cursor_y = y;
+}
+
 void moveCursor() {
   interrupt(0x10, 0x0200, 0x0000, 0x0000, cursor_y << 8 | cursor_x);
 }

@@ -13,3 +13,11 @@ int putsColor(char *string, int color) {
 int gets(char *string) {
     interrupt(0x21, 0x1, string, 0, 0);
 }
+
+void clearScreen() {
+    interrupt(0x21, 0x7, 0, 0, 0);
+}
+
+void setCursorPosition(int x, int y) {
+    interrupt(0x21, 0x8, x, y, 0);
+}

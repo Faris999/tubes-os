@@ -16,7 +16,7 @@ int main() {
   clearScreen();
   
   metadata.parent_index = 0x00;
-  metadata.node_name = "shell";
+  metadata.node_name = "ls";
   executeProgram(&metadata, 0x2000);
 }
 
@@ -48,6 +48,10 @@ void handleInterrupt21(int AX, int BX, int CX, int DX) {
     case 0x6:
       executeProgram(BX, CX);
       break;
+    case 0x7:
+      clearScreen();
+    case 0x8:
+      setCursorPosition(BX, CX);
     default:
       printString("Invalid interrupt");
   }
@@ -61,6 +65,9 @@ void executeProgram(struct file_metadata *metadata, int segment) {
   metadata->buffer = buf;
   read(metadata, &return_code);
   if (return_code == FS_SUCCESS) {
+    println("Executing program");
+    println(metadata->node_name);
+
     for (i = 0; i < 8192; i++) {
       if (i < metadata->filesize) {
         putInMemory(segment, i, metadata->buffer[i]);
@@ -112,8 +119,7 @@ void fillMap() {
   readSector(&map_fs_buffer, FS_MAP_SECTOR_NUMBER);
 
   // Fill map
-  // TODO: Balikin lagi jadi 15 kalo udah cleanup
-  for (i = 0; i <= 31; i++) {
+  for (i = 0; i <= 15; i++) {
     map_fs_buffer.is_filled[i] = true;
   }
 

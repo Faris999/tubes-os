@@ -2,9 +2,11 @@
 #include "header/std_type.h"
 #include "header/textio.h"
 #include "header/string.h"
+#include "header/program.h"
 
 
 void printCWD(char *path_str, byte current_dir); 
+void execute(char *exec_name, byte current_dir);
 
 int main() {
   char input_buf[64];
@@ -12,6 +14,8 @@ int main() {
   char *arguments[64];
   byte current_dir = 0xFF;
   int i; 
+
+  // clearScreen();
 
   while (true) {
     puts("OS@IF2230:");
@@ -30,6 +34,8 @@ int main() {
 
     if (strcmp("ls", input_buf)) {
         putsColor("harusnya ini ls\r\n", 0x0A);
+        execute("ls", current_dir);
+        puts("balik lagi?");
     //   ls(arguments[1], current_dir);
     }/* else if (strcmp("mkdir", arguments[0])) {
       mkdir(arguments[1], current_dir);
@@ -47,6 +53,13 @@ int main() {
       println("unknown command");
     } */
   }
+}
+
+void execute(char *exec_name, byte current_dir) {
+  struct file_metadata metadata;
+  metadata.node_name = exec_name;
+  metadata.parent_index = 0x00;
+  exec(&metadata, 0x3000); 
 }
 
 void printCWD(char *path_str, byte current_dir) {
