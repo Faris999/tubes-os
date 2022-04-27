@@ -25,13 +25,36 @@ void cp(char *src, char *dst, byte current_dir) {
       break;
     case FS_R_NODE_NOT_FOUND:
       println("File not found");
-      break;
+      return;
     case FS_R_TYPE_IS_FOLDER:
       println("Copying folder not supported");
-      break;
+      return;
     default:
       printString(UNKNOWN_ERROR);
+      return;
+  }
+
+  switch (return_code) {
+    case FS_SUCCESS:
       break;
+    case FS_W_FILE_ALREADY_EXIST:
+      println("File already exists");
+      return;
+    case FS_W_INVALID_FOLDER:
+      println("Invalid folder");
+      return;
+    case FS_W_MAXIMUM_NODE_ENTRY:
+      println("Maximum node entry reached");
+      return;
+    case FS_W_MAXIMUM_SECTOR_ENTRY:
+      println("Maximum sector entry reached");
+      return;
+    case FS_W_NOT_ENOUGH_STORAGE:
+      println("Not enough storage");
+      return;
+    default:
+      printString(UNKNOWN_ERROR);
+      return;
   }
 }
 

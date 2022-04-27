@@ -49,11 +49,7 @@ void shell() {
   char path_str[128];
   char *arguments[64];
   byte current_dir = FS_NODE_P_IDX_ROOT;
-  int i;
-
-  printString("Current directory: ");
-  printHex(current_dir);
-  println("");
+  int i; 
 
   while (true) {
     printString("OS@IF2230:");
