@@ -7,6 +7,7 @@
 global _putInMemory
 global _interrupt
 global _makeInterrupt21
+global _launchProgram
 extern _handleInterrupt21
 
 ;void putInMemory (int segment, int address, byte b)
@@ -62,6 +63,21 @@ _makeInterrupt21:
 	mov [si],dx	;set up our vector
 	pop ds
 	ret
+
+_launchProgram:
+	mov bp, sp
+	mov bx, [bp+2]
+	mov ax, cs
+	mov dx, ax
+	mov si, jump
+	mov [si+3], bx
+	mov ds, bx
+	mov ss, bx
+	mov es, bx
+	mov sp, 0xfff0
+	mov bp, 0xfff0
+
+jump: jmp 0x0000:0x0000
 
 ;this is called when interrupt 21 happens
 ;it will call your function:

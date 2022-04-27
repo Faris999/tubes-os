@@ -39,8 +39,32 @@ void handleInterrupt21(int AX, int BX, int CX, int DX) {
     case 0x5:
       write(BX, CX);
       break;
+    case 0x6:
+      executeProgram(BX, CX);
+      break;
     default:
       printString("Invalid interrupt");
+  }
+}
+
+void executeProgram(struct file_metadata *metadata, int segment) {
+  enum fs_retcode return_code;
+  byte buf[8192];
+  int i;
+
+  metadata->buffer = buf;
+  read(metadata, &return_code);
+  if (return_code == FS_SUCCESS) {
+    for (i = 0; i < 8192; i++) {
+      if (i < metadata->filesize) {
+        putInMemory(segment, i, metadata->buffer[i]);
+      } else {
+        putInMemory(segment, i, 0x00);
+      }
+    }
+    launchProgram(segment);
+  } else {
+    println("Error: Failed to read file");
   }
 }
 
