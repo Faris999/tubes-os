@@ -425,30 +425,3 @@ void splitString(char* string, char* return_array[]) {
   }
 }
 
-void printCWD(char *path_str, byte current_dir) {
-  struct node_filesystem node_fs_buffer;
-  struct node_entry node_buffer;
-  char path_array[64][14];
-  int i = 63;
-  
-  readSector(&(node_fs_buffer.nodes[0]), FS_NODE_SECTOR_NUMBER);
-  readSector(&(node_fs_buffer.nodes[32]), FS_NODE_SECTOR_NUMBER + 1);
-
-  printHex(current_dir);
-  printString("/");
-
-  while (current_dir != FS_NODE_P_IDX_ROOT) {
-    node_buffer = node_fs_buffer.nodes[current_dir];
-    strcpy(path_array[i], node_buffer.name);
-    current_dir = node_buffer.parent_node_index;
-    i--;
-  }
-
-  for (i = i + 1; i < 64; i++) {
-    if (path_array[i][0] == 0) {
-      continue;
-    }
-    printString(path_array[i]);
-    printString("/");
-  }
-}

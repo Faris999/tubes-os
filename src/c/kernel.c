@@ -9,20 +9,26 @@
 #include "header/utils.h"
 
 int main() {
-  int i;
-  char file_name[14];
+  struct file_metadata metadata;
+
   fillMap();
   makeInterrupt21();
   clearScreen();
   
-  shell();
+  metadata.parent_index = 0x00;
+  metadata.node_name = "shell";
+  executeProgram(&metadata, 0x2000);
 }
 
 void handleInterrupt21(int AX, int BX, int CX, int DX) {
   printString("interrupt21");
   switch (AX) {
     case 0x0:
-      printString(BX);
+      if (CX == 0x0) {
+        printString(BX);
+      } else {
+        printStringColor(BX, CX);
+      }
       break;
     case 0x1:
       readString(BX);
@@ -65,47 +71,5 @@ void executeProgram(struct file_metadata *metadata, int segment) {
     launchProgram(segment);
   } else {
     println("Error: Failed to read file");
-  }
-}
-
-void shell() {
-  char input_buf[64];
-  char path_str[128];
-  char *arguments[64];
-  byte current_dir = FS_NODE_P_IDX_ROOT;
-  int i; 
-
-  while (true) {
-    printString("OS@IF2230:");
-    printCWD(path_str, current_dir);
-    printString("$ ");
-    clear(input_buf, 64);
-    readString(input_buf);
-    clear(arguments, 64);
-    splitString(input_buf, arguments);
-    printString("arguments: ");
-    for (i = 0; i < 3; i++) {
-      printString(arguments[i]);
-      printString(" ");
-    }
-    println("");
-
-    if (strcmp("cd", arguments[0])) {
-      cd(arguments[1], &current_dir);
-    } else if (strcmp("mkdir", arguments[0])) {
-      mkdir(arguments[1], current_dir);
-    } else if (strcmp("ls", arguments[0])) { 
-      ls(arguments[1], current_dir);
-    } else if (strcmp("cat", arguments[0])) {
-      cat(arguments[1], current_dir);
-    } else if (strcmp("mv", arguments[0])) {
-      mv(arguments[1], arguments[2], current_dir);
-    } else if (strcmp("cp", arguments[0])) {
-      cp(arguments[1], arguments[2], current_dir);
-    } else if (strcmp("clear", arguments[0])) {
-      clearScreen();
-    } else {
-      println("Unknown command");
-    }
   }
 }
