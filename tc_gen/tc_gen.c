@@ -67,11 +67,6 @@ void tc_D(byte buf[2880][512]) {
     }
 }
 
-void shell(byte buf[2880][512]) {
-    create_folder(buf, "bin", 0xFF);
-    insert_file(buf, "shell", 0);
-}
-
 int main(int argc, char const *argv[]) {
     if (argc < 2) {
         fprintf(stderr, "Usage : tester <test case>\n");
@@ -106,10 +101,7 @@ int main(int argc, char const *argv[]) {
             break;
         case 'D':
             tc_D(imagebuffer);
-            break;
-        case 'E':
-            shell(imagebuffer);
-            break;
+            break; 
     }
 
     // Overwrite old file

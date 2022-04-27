@@ -1,36 +1,52 @@
 SRC := src/c
 OBJ := out
+BIN := out/bin
 
-SOURCES = $(wildcard $(SRC)/*.c)
-OBJECTS = $(patsubst $(SRC)/%.c, $(OBJ)/%.o, $(SOURCES))
+KERNEL_SOURCES = kernel.c filesystem.c std_lib.c terminal.c 
+KERNEL_OBJECTS = $(patsubst %.c, $(OBJ)/%.o, $(KERNEL_SOURCES))
+
+# LIBRARY_SOURCES = string.c textio.c fileio.c program.c
+LIBRARY_SOURCES = textio.c
+LIBRARY_OBJECTS = $(patsubst %.c, $(OBJ)/%.o, $(LIBRARY_SOURCES))
+
+EXECUTABLE_SOURCES = shell.c
+EXECUTABLE_OBJECTS = $(patsubst %.c, $(OBJ)/%.o, $(EXECUTABLE_SOURCES))
+EXECUTABLES = $(patsubst $(OBJ)/%.o, $(BIN)/%, $(EXECUTABLE_OBJECTS))
 
 .PHONY: all tc_gen test
+.PRECIOUS: $(EXECUTABLE_OBJECTS) $(LIBRARY_OBJECTS)
 
 # Makefile
-all: diskimage bootloader kernel shell
+all: diskimage bootloader kernel executable 
 
 # Recipes
 diskimage:
 	dd if=/dev/zero of=out/system.img bs=512 count=2880
-bootloader:
+	python3 ./src/python/fill_map.py
+bootloader: diskimage
 	nasm src/asm/bootloader.asm -o out/bootloader
 	dd if=out/bootloader of=out/system.img bs=512 count=1 conv=notrunc
 $(OBJ)/%.o: $(SRC)/%.c
 	bcc -ansi -c -o $@ $<
-kernel: $(OBJECTS)
-	nasm -f as86 src/asm/kernel.asm -o out/kernel_asm.o
+interrupt:
 	nasm -f as86 src/asm/interrupt.asm -o out/lib_interrupt.o
-	ld86 -o out/kernel -d out/kernel.o out/kernel_asm.o out/lib_interrupt.o $(filter-out out/kernel.o out/shell.o,$(OBJECTS))
+kernel: bootloader interrupt $(KERNEL_OBJECTS)
+	nasm -f as86 src/asm/kernel.asm -o out/kernel_asm.o
+	ld86 -o out/kernel -d $(KERNEL_OBJECTS) out/kernel_asm.o out/lib_interrupt.o 
 	dd if=out/kernel of=out/system.img bs=512 conv=notrunc seek=1
+$(BIN)/%: $(OBJ)/%.o $(LIBRARY_OBJECTS)
+	# executable
+	ld86 -o $@ -d $< $(LIBRARY_OBJECTS) out/lib_interrupt.o out/filesystem.o out/std_lib.o
+executable: kernel $(EXECUTABLES)
+	python3 src/python/insert_executables.py
 clean:
-	rm $(wildcard $(OBJ)/*.o)
-	rm out/bootloader out/kernel out/shell
+	rm -f $(KERNEL_OBJECTS) $(LIBRARY_OBJECTS) $(EXECUTABLE_OBJECTS) $(EXECUTABLES)
+	rm -f out/bootloader out/kernel out/kernel_asm.o out/lib_interrupt.o out/system.img
 tc_gen:
 	cd tc_gen && gcc tc_gen.c tc_lib -o tc_gen
 	mv tc_gen/tc_gen out/
 	cp -r tc_gen/file_src out/
 test%: all 
-	python3 ./src/python/fill_map.py
 	cd out && ./tc_gen $(patsubst test%, %, $@)
 	# $(MAKE) run
 shell:
