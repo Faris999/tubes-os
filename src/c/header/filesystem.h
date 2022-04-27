@@ -62,13 +62,6 @@ enum fs_retcode {
     FS_W_INVALID_FOLDER       = 7
 };
 
-void writeSector(byte *buffer, int sector_number);
-void readSector(byte *buffer, int sector_number);
-
-void fillMap();
-
-void write(struct file_metadata *metadata, enum fs_retcode *return_code);
-void read(struct file_metadata *metadata, enum fs_retcode *return_code);
 
 void loadFilesystems(struct node_filesystem *node_fs_buffer,
                      struct sector_filesystem *sector_fs_buffer);
