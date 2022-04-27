@@ -1,6 +1,7 @@
 #include "header/terminal.h"
 
 char hex[17] = "0123456789ABCDEF";
+char *NEWLINE = "\r\n";
 int cursor_x = 0;
 int cursor_y = 0;
 
@@ -66,6 +67,11 @@ void printHex(int a) {
   }
   buf[4] = '\0';
   printString(buf);
+}
+
+void println(char *string) {
+  printString(string);
+  printString(NEWLINE);
 }
 
 void printString(char *string) {

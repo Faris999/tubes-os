@@ -3,6 +3,13 @@
 #include "header/filesystem.h"
 #include "header/kernel.h"
 
+char *UNKNOWN_ERROR = "Unknown error";
+
+// void initializeConstants() {
+//   // Initialize constants
+//   UNKNOWN_ERROR = "Unknown error";
+// }
+
 void cp(char *src, char *dst, byte current_dir) {
   struct file_metadata metadata;
   enum fs_retcode return_code;
@@ -22,13 +29,13 @@ void cp(char *src, char *dst, byte current_dir) {
       write(&metadata, &return_code);
       break;
     case FS_R_NODE_NOT_FOUND:
-      printString("File not found\r\n");
+      println("File not found");
       break;
     case FS_R_TYPE_IS_FOLDER:
-      printString("Copying folder not supported\r\n");
+      println("Copying folder not supported");
       break;
     default:
-      printString("Unknown error\r\n");
+      printString(UNKNOWN_ERROR);
       break;
   }
 }
@@ -44,42 +51,42 @@ void mkdir(char* dir_name, byte current_dir) {
 
   switch (return_code) {
     case FS_SUCCESS:
-      printString("Directory created\r\n");
+      println("Directory created");
       break;
     case FS_W_FILE_ALREADY_EXIST:
-      printString("Directory already exists\r\n");
+      println("Directory already exists");
       break;
     case FS_W_INVALID_FOLDER:
-      printString("Invalid folder\r\n");
+      println("Invalid folder");
       break;
     case FS_W_MAXIMUM_NODE_ENTRY:
-      printString("Maximum node entry reached\r\n");
+      println("Maximum node entry reached");
       break;
     case FS_W_MAXIMUM_SECTOR_ENTRY:
-      printString("Maximum sector entry reached\r\n");
+      println("Maximum sector entry reached");
       break;
     default:
-      printString("Unknown error\r\n");
+      printString(UNKNOWN_ERROR);
       break;
   }
 }
 
 void mv(char *src, char *dst, byte current_dir) {
   if (strlen(src) == 0) {
-    printString("Source file name is empty\r\n");
+    println("Source file name is empty");
     return;
   }
 
   if (strlen(dst) == 0) {
-    printString("Destination file name is empty\r\n");
+    println("Destination file name is empty");
     return;
   } 
 
   if (startswith("/", dst)) {
-    printString("Moving to root directory\r\n");
+    println("Moving to root directory");
     mv_to_root(src, dst+1, current_dir);
   } else if (startswith("../", dst)) {
-    printString("Moving to parent directory\r\n");
+    println("Moving to parent directory");
     mv_to_parent(src, dst+3, current_dir);
   } else {
     mv_to_child(src, dst, current_dir);
@@ -108,10 +115,10 @@ void mv_to_parent(char *src, char *dst, byte current_dir) {
       }
       break;
     case FS_R_NODE_NOT_FOUND:
-      printString("Source file not found\r\n");
+      println("Source file not found");
       return;
     default:
-      printString("Error while getting source file\r\n");
+      println("Error while getting source file");
       return;
   }
 
@@ -126,20 +133,20 @@ void mv_to_parent(char *src, char *dst, byte current_dir) {
   // Check if destination already exists
   switch (get_node(&metadata)) {
     case FS_R_TYPE_IS_FOLDER:
-      printString("Moving to folder\r\n");
+      println("Moving to folder");
       dst_index = metadata.node_index;
       if (file_exists(src, metadata.node_index)) {
-        printString("Destination file already exists\r\n");
+        println("Destination file already exists");
         return;
       }
       break;
     case FS_SUCCESS:
-      printString("Destination file already exists\r\n");
+      println("Destination file already exists");
       return;
     case FS_R_NODE_NOT_FOUND:
       break;
     default:
-      printString("Error while getting destination file\r\n");
+      println("Error while getting destination file");
       return;
   }
 
@@ -166,10 +173,10 @@ void mv_to_root(char *src, char *dst, byte current_dir) {
       src_index = metadata.node_index;
       break;
     case FS_R_NODE_NOT_FOUND:
-      printString("Source file not found\r\n");
+      println("Source file not found");
       return;
     default:
-      printString("Error reading source file\r\n");
+      println("Error reading source file");
       return;
   }
 
@@ -188,7 +195,7 @@ void mv_to_root(char *src, char *dst, byte current_dir) {
       dst_index = metadata.node_index;
       break;
     case FS_SUCCESS:
-      printString("Destination file already exists\r\n");
+      println("Destination file already exists");
       return;
   }
 
@@ -215,10 +222,10 @@ void mv_to_child(char *src, char *dst, byte current_dir) {
       src_index = metadata.node_index;
       break;
     case FS_R_NODE_NOT_FOUND:
-      printString("Source file not found\r\n");
+      println("Source file not found");
       return;
     default:
-      printString("Error reading source file\r\n");
+      println("Error reading source file");
       return;
   }
 
@@ -229,21 +236,21 @@ void mv_to_child(char *src, char *dst, byte current_dir) {
 
   switch (get_node(&metadata)) {
     case FS_R_TYPE_IS_FOLDER:
-      printString("Moving to folder\r\n");
+      println("Moving to folder");
       node_buffer.parent_node_index = metadata.node_index;
       if (file_exists(src, metadata.node_index)) {
-        printString("Destination file already exists\r\n");
+        println("Destination file already exists");
         return;
       }
       break;
     case FS_SUCCESS:
       // File exists
-      printString("Destination file already exists\r\n");
+      println("Destination file already exists");
       break;
     case FS_R_NODE_NOT_FOUND:
       // File not found
       // Rename file
-      printString("Renaming\r\n");
+      println("Renaming");
       clear(node_buffer.name, 14);
       strcpy(node_buffer.name, dst);
       break;
@@ -271,13 +278,13 @@ void cat(char *file_name, byte current_dir) {
     case FS_SUCCESS:
       break;
     case FS_R_NODE_NOT_FOUND:
-      printString("File not found\r\n");
+      println("File not found");
       return;
     case FS_R_TYPE_IS_FOLDER:
-      printString("File is a folder\r\n");
+      println("File is a folder");
       return;
     default:
-      printString("Unknown error\r\n");
+      println("Unknown error");
       return;
   }
 
@@ -290,56 +297,64 @@ void cat(char *file_name, byte current_dir) {
     }
     printchar(buffer[i]);
   }
-  printString("\r\n");
+  println("");
 }
 
-void ls(char *dir_name, byte current_dir) {
+void get_children(byte current_dir, struct node_entry *node_buffer) {
   struct node_filesystem node_fs_buffer;
-  byte color;
-  int i = 0;
+  int i;
+  int j = 0;
 
-  printString("Listing directory ");
-  printString(dir_name);
-  printString(" (");
-  printHex(current_dir);
-  printString(")\r\n");
-
-  readSector(&(node_fs_buffer.nodes[0]), FS_NODE_SECTOR_NUMBER);
-  readSector(&(node_fs_buffer.nodes[32]), FS_NODE_SECTOR_NUMBER + 1);
-
-  if (dir_name[0] != '\0') {
-    for (i = 0; i < 64; i++) {
-      if (strcmp(dir_name, node_fs_buffer.nodes[i].name)) {
-        if (node_fs_buffer.nodes[i].sector_entry_index == FS_NODE_S_IDX_FOLDER) {
-          if (node_fs_buffer.nodes[i].parent_node_index == current_dir) {
-            current_dir = i;
-            break;
-          }
-        } else {
-          printString("Not a directory\r\n");
-          return;
-        }
-      }
-    }
-  }
-
-  if (i == 64) {
-    printString("Directory not found\r\n");
-    return;
-  }
+  loadNode(&node_fs_buffer);
 
   for (i = 0; i < 64; i++) {
     if (node_fs_buffer.nodes[i].parent_node_index == current_dir) {
       if (node_fs_buffer.nodes[i].name[0] != '\0') {
-        if (node_fs_buffer.nodes[i].sector_entry_index == FS_NODE_S_IDX_FOLDER) {
-          color = 0x0A;
-        } else {
-          color = 0x0F;
-        }
-        printStringColor(node_fs_buffer.nodes[i].name, color);
-        printString("\r\n");
+        node_buffer[j] = node_fs_buffer.nodes[i];
+        j++;
       }
     }
+  }
+
+  node_buffer[j].name[0] = '\0';
+}
+
+void ls(char *dir_name, byte current_dir) {
+  struct node_filesystem node_fs_buffer;
+  struct file_metadata metadata;
+  struct node_entry node_buffer[64];
+  byte color;
+  int i = 0;
+
+  loadNode(&node_fs_buffer);
+
+  // metadata = (struct file_metadata) {
+  //   .node_name = dir_name,
+  //   .parent_index = current_dir
+  // };
+
+  // if (dir_name[0] != '\0') {
+  //   read(())  
+  // }
+
+  if (i == 64) {
+    println("Directory not found");
+    return;
+  }
+
+  get_children(current_dir, node_buffer);
+
+  for (i = 0; i < 64; i++) {
+    if (node_buffer[i].name[0] == '\0') {
+      break;
+    }
+    if (node_buffer[i].sector_entry_index == FS_NODE_S_IDX_FOLDER) {
+      color = 0x0B;
+    } else {
+      color = 0x0F;
+    }
+    printStringColor(node_buffer[i].name, color);
+    println("");
   }
 }
 
@@ -378,7 +393,7 @@ void cd(char *dir_name, byte *current_dir) {
   }
 
   if (i == 64) {
-    printString("Directory not found\r\n");
+    println("Directory not found");
     return;
   }
 

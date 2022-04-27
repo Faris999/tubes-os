@@ -53,7 +53,7 @@ void shell() {
 
   printString("Current directory: ");
   printHex(current_dir);
-  printString("\r\n");
+  println("");
 
   while (true) {
     printString("OS@IF2230:");
@@ -68,7 +68,7 @@ void shell() {
       printString(arguments[i]);
       printString(" ");
     }
-    printString("\r\n");
+    println("");
 
     if (strcmp("cd", arguments[0])) {
       cd(arguments[1], &current_dir);
@@ -85,7 +85,7 @@ void shell() {
     } else if (strcmp("clear", arguments[0])) {
       clearScreen();
     } else {
-      printString("Unknown command\r\n");
+      println("Unknown command");
     }
   }
 }
