@@ -1,6 +1,8 @@
 #include "header/filesystem.h"
 #include "header/std_type.h"
 #include "header/textio.h"
+#include "header/string.h"
+
 
 void printCWD(char *path_str, byte current_dir); 
 
@@ -26,9 +28,10 @@ int main() {
     // }
     // println("");
 
-    /*if ( strcmp("cd", arguments[0])) {
-      cd(arguments[1], &current_dir);
-    } else if (strcmp("mkdir", arguments[0])) {
+    if (strcmp("ls", input_buf)) {
+        putsColor("harusnya ini ls\r\n", 0x0A);
+    //   ls(arguments[1], current_dir);
+    }/* else if (strcmp("mkdir", arguments[0])) {
       mkdir(arguments[1], current_dir);
     } else if (strcmp("ls", arguments[0])) { 
       ls(arguments[1], current_dir);

@@ -5,8 +5,7 @@ BIN := out/bin
 KERNEL_SOURCES = kernel.c filesystem.c std_lib.c terminal.c 
 KERNEL_OBJECTS = $(patsubst %.c, $(OBJ)/%.o, $(KERNEL_SOURCES))
 
-# LIBRARY_SOURCES = string.c textio.c fileio.c program.c
-LIBRARY_SOURCES = textio.c
+LIBRARY_SOURCES = string.c textio.c fileio.c program.c
 LIBRARY_OBJECTS = $(patsubst %.c, $(OBJ)/%.o, $(LIBRARY_SOURCES))
 
 EXECUTABLE_SOURCES = shell.c
