@@ -5,20 +5,23 @@
 #include "header/fileio.h"
 
 int main() {
-    // struct message msg;
-    // get_message(&msg);
+    struct message msg;
     char buf[64];
+    get_message(&msg);
     // char *buffer = "from ls";
 
     // writeSector(buffer, 0x107);
     
-    // setCursorPosition(0, 4);
-    log("from ls", 0x107);
+    // log("from ls", 0x107);
+    // syncCursorFromMessage();
+    // log("from ls sync cursor1", 0x107);
     putsColor("Welcome from ls!\r\n", 0x0B);
         // puts("Press enter to continue...");
-        gets(buf);
+        // gets(buf);
         // clearScreen();
     // while (true);
+    // syncCursorToMessage();
+    // log("from ls sync cursor2", 0x107);
     exit();
 }
 

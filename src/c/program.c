@@ -1,6 +1,7 @@
 #include "header/program.h"
 #include "header/filesystem.h"
 #include "header/fileio.h"
+#include "header/textio.h"
 
 extern int interrupt(int int_number, int AX, int BX, int CX, int DX);
 
@@ -14,7 +15,6 @@ void exit() {
 
     metadata.node_name = "shell";
     metadata.parent_index = 0x00;
-
     exec(&metadata, 0x2000);
 }
 

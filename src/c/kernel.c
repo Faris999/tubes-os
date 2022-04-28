@@ -7,9 +7,11 @@
 #include "header/terminal.h"
 #include "header/filesystem.h"
 #include "header/utils.h"
+#include "header/program.h"
 
 int main() {
   struct file_metadata metadata;
+  // struct message msg;
 
   fillMap();
   makeInterrupt21();
@@ -17,6 +19,9 @@ int main() {
   
   metadata.parent_index = 0x00;
   metadata.node_name = "shell";
+  // msg.cursor_x = 0;
+  // msg.cursor_y = 0;
+  // writeSector(&msg, 0x104);
   executeProgram(&metadata, 0x2000);
 }
 
@@ -54,6 +59,8 @@ void handleInterrupt21(int AX, int BX, int CX, int DX) {
       setCursorPosition(BX, CX);
     case 0x9:
       log(BX, CX);
+    case 0xa:
+      getCursorPosition(BX, CX);
     default:
       printString("Invalid interrupt");
   }
@@ -92,7 +99,7 @@ void executeProgram(struct file_metadata *metadata, int segment) {
   metadata->buffer = buf;
   read(metadata, &return_code);
   if (return_code == FS_SUCCESS) {
-    log(metadata->node_name, 0x107);
+    // log(metadata->node_name, 0x107);
     for (i = 0; i < 8192; i++) {
       if (i < metadata->filesize) {
         putInMemory(segment, i, metadata->buffer[i]);

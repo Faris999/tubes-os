@@ -9,6 +9,7 @@ void printStringColor(char *string, byte color);
 void readString(char *string);
 void clearScreen();
 void setCursorPosition(int x, int y);
+void getCursorPosition(int *x, int *y);
 
 char hex[17];
 char *NEWLINE;

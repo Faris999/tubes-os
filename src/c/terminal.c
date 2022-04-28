@@ -5,9 +5,18 @@ char *NEWLINE = "\r\n";
 int cursor_x;
 int cursor_y;
 
+void moveCursor();
+
+
 void setCursorPosition(int x, int y) {
     cursor_x = x;
     cursor_y = y;
+    moveCursor();
+}
+
+void getCursorPosition(int *x, int *y) {
+    *x = cursor_x;
+    *y = cursor_y;
 }
 
 void moveCursor() {
@@ -20,7 +29,6 @@ void printchar(char a) {
 }
 
 void printCharColor(char a, byte color) {
-  moveCursor();
   if (a == '\b') {
     if (cursor_x > 0) {
       cursor_x--;
