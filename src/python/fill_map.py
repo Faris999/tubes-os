@@ -1,25 +1,7 @@
 import numpy as np
+from filesystem import *
 
 # Assumes CWD is the root of the project
-
-MAP_SECTOR_NUMBER = 0x100
-
-disk = np.zeros((1474560,), dtype=np.uint8)
-
-def save_to_disk():
-    with open('out/system.img', 'wb') as f:
-        f.write(disk.tobytes())
-
-def load_disk():
-    with open('out/system.img', 'rb') as f:
-        disk[:] = np.frombuffer(f.read(), dtype=np.uint8)
-
-def read_sector(sector):
-    return disk[sector * 512:(sector + 1) * 512]
-
-def write_sector(data, sector):
-    disk[sector * 512:(sector + 1) * 512] = data
-    save_to_disk()
 
 def fill_map():
     map_data = read_sector(MAP_SECTOR_NUMBER)

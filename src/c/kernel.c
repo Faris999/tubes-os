@@ -53,17 +53,17 @@ void handleInterrupt21(int AX, int BX, int CX, int DX) {
     case 0x8:
       setCursorPosition(BX, CX);
     case 0x9:
-      log(BX);
+      log(BX, CX);
     default:
       printString("Invalid interrupt");
   }
 }
 
-void log(char *message) {
+void log(char *message, int sector) {
   char buffer[512];
   int length = strlen(message);
   int i, j;
-  readSector(buffer, 0x105);
+  readSector(buffer, sector);
 
   for (i = 0; i < 512; i++) {
     if (buffer[i] == '\0') {
@@ -71,7 +71,7 @@ void log(char *message) {
         buffer[i + j] = message[j];
       }
       buffer[i + length] = '\0';
-      writeSector(buffer, 0x105);
+      writeSector(buffer, sector);
       return;
     }
   }
@@ -85,8 +85,8 @@ void executeProgram(struct file_metadata *metadata, int segment) {
   metadata->buffer = buf;
   read(metadata, &return_code);
   if (return_code == FS_SUCCESS) {
-    println("Executing program");
-    println(metadata->node_name);
+    log("Executing program", 0x107);
+    log(metadata->node_name, 0x107);
     for (i = 0; i < 8192; i++) {
       if (i < metadata->filesize) {
         putInMemory(segment, i, metadata->buffer[i]);
