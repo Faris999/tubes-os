@@ -47,7 +47,7 @@ _launchProgram:
 	mov bp, sp
 	mov bx, [bp+2]
 	mov ax, cs
-	mov dx, ax
+	mov ds, ax
 	mov si, jump
 	mov [si+3], bx
 	mov ds, bx
