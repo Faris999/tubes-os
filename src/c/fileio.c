@@ -18,3 +18,7 @@ void readSector(byte *buffer, int sector_number) {
 void writeSector(byte *buffer, int sector_number) {
     interrupt(0x21, 0x03, buffer, sector_number, 0);
 }
+
+void log(char *message) {
+    interrupt(0x21, 0x09, message, 0, 0);
+}
