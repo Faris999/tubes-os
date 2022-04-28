@@ -40,9 +40,7 @@ int main() {
     // println("");
 
     if (strcmp("ls", input_buf)) {
-        putsColor("harusnya ini ls\r\n", 0x0A);
         execute("ls", current_dir);
-        puts("balik lagi?");
     //   ls(arguments[1], current_dir);
     }/* else if (strcmp("mkdir", arguments[0])) {
       mkdir(arguments[1], current_dir);
