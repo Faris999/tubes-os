@@ -2,8 +2,8 @@
 
 char hex[17] = "0123456789ABCDEF";
 char *NEWLINE = "\r\n";
-int cursor_x = 0;
-int cursor_y = 0;
+int cursor_x;
+int cursor_y;
 
 void setCursorPosition(int x, int y) {
     cursor_x = x;
@@ -20,6 +20,7 @@ void printchar(char a) {
 }
 
 void printCharColor(char a, byte color) {
+  moveCursor();
   if (a == '\b') {
     if (cursor_x > 0) {
       cursor_x--;

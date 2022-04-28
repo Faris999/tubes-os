@@ -1,6 +1,7 @@
 #include "header/filesystem.h"
 #include "header/std_type.h"
 #include "header/textio.h"
+#include "header/fileio.h"
 #include "header/string.h"
 #include "header/program.h"
 
@@ -12,47 +13,55 @@ int main() {
   char input_buf[64];
   char path_str[128];
   char *arguments[64];
+  struct file_metadata metadata;
   byte current_dir = 0xFF;
   int i; 
 
   // clearScreen();
+  setCursorPosition(0, 5);
+  log("from shell", 0x107);
+  puts("OS@IF2230:");
+  gets(input_buf);
+  metadata.parent_index = 0x00;
+  metadata.node_name = "ls";
+  exec(&metadata, 0x5000); 
 
-  while (true) {
-    puts("OS@IF2230:");
-    printCWD(path_str, current_dir);
-    puts("$ ");
-    // clear(input_buf, 64);
-    gets(input_buf);
-    // clear(arguments, 64);
-    // splitString(input_buf, arguments);
-    // printString("arguments: ");
-    // for (i = 0; i < 3; i++) {
-    //   printString(arguments[i]);
-    //   printString(" ");
-    // }
-    // println("");
 
-    if (strcmp("ls", input_buf)) {
-        putsColor("harusnya ini ls\r\n", 0x0A);
-        execute("ls", current_dir);
-        puts("balik lagi?");
-    //   ls(arguments[1], current_dir);
-    }/* else if (strcmp("mkdir", arguments[0])) {
-      mkdir(arguments[1], current_dir);
-    } else if (strcmp("ls", arguments[0])) { 
-      ls(arguments[1], current_dir);
-    } else if (strcmp("cat", arguments[0])) {
-      cat(arguments[1], current_dir);
-    } else if (strcmp("mv", arguments[0])) {
-      mv(arguments[1], arguments[2], current_dir);
-    } else if (strcmp("cp", arguments[0])) {
-      cp(arguments[1], arguments[2], current_dir);
-    } else if (strcmp("clear", arguments[0])) {
-      clearscreen();
-    } else {
-      println("unknown command");
-    } */
-  }
+  // while (true) {
+  //   printCWD(path_str, current_dir);
+  //   puts("$ ");
+  //   // clear(input_buf, 64);
+  //   gets(input_buf);
+  //   // clear(arguments, 64);
+  //   // splitString(input_buf, arguments);
+  //   // printString("arguments: ");
+  //   // for (i = 0; i < 3; i++) {
+  //   //   printString(arguments[i]);
+  //   //   printString(" ");
+  //   // }
+  //   // println("");
+
+  //   if (strcmp("ls", input_buf)) {
+  //       putsColor("harusnya ini ls\r\n", 0x0A);
+  //       execute("ls", current_dir);
+  //       puts("balik lagi?");
+  //   //   ls(arguments[1], current_dir);
+  //   }/* else if (strcmp("mkdir", arguments[0])) {
+  //     mkdir(arguments[1], current_dir);
+  //   } else if (strcmp("ls", arguments[0])) { 
+  //     ls(arguments[1], current_dir);
+  //   } else if (strcmp("cat", arguments[0])) {
+  //     cat(arguments[1], current_dir);
+  //   } else if (strcmp("mv", arguments[0])) {
+  //     mv(arguments[1], arguments[2], current_dir);
+  //   } else if (strcmp("cp", arguments[0])) {
+  //     cp(arguments[1], arguments[2], current_dir);
+  //   } else if (strcmp("clear", arguments[0])) {
+  //     clearscreen();
+  //   } else {
+  //     println("unknown command");
+  //   } */
+  // }
 }
 
 void execute(char *exec_name, byte current_dir) {

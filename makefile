@@ -54,6 +54,6 @@ shell:
 	nasm -f as86 src/asm/interrupt.asm -o out/lib_interrupt.o
 	ld86 -o out/shell -d out/shell.o out/lib_interrupt.o out/textio.o out/filesystem.o out/std_lib.o
 run:
-	-echo "c" | sudo bochs -f src/config/if2230.config
+	-sudo bochs -f src/config/if2230.config
 	python3 src/python/extract_log.py
 build-run: all run

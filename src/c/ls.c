@@ -2,21 +2,27 @@
 #include "header/filesystem.h"
 #include "header/program.h"
 #include "header/textio.h"
+#include "header/fileio.h"
 
 int main() {
     // struct message msg;
     // get_message(&msg);
     char buf[64];
+    // char *buffer = "from ls";
 
+    // writeSector(buffer, 0x107);
+    
+    // setCursorPosition(0, 4);
+    log("from ls", 0x107);
     putsColor("Welcome from ls!\r\n", 0x0B);
         // puts("Press enter to continue...");
         gets(buf);
         // clearScreen();
-    
+    // while (true);
     exit();
 }
 
-void ls(char *dir_name, byte current_dir) {
+// void ls(char *dir_name, byte current_dir) {
 //   struct file_metadata metadata;
 //   struct node_entry node_buffer[64];
 //   enum fs_retcode return_code;
@@ -49,4 +55,4 @@ void ls(char *dir_name, byte current_dir) {
 //     printStringColor(node_buffer[i].name, color);
 //     println("");
 //   }
-}
+// }

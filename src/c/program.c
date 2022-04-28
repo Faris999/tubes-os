@@ -10,7 +10,7 @@ void exec(struct file_metadata *metadata, int segment) {
 
 void exit() {
     struct file_metadata metadata;
-    struct message msg;
+    // struct message msg;
 
     metadata.node_name = "shell";
     metadata.parent_index = 0x00;
