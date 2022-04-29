@@ -50,23 +50,17 @@ int main() {
       continue;
     }
 
-    if (strcmp("ls", arguments[0])) {
-      execute("ls", current_dir, arguments);
-    } else if (strcmp("mkdir", arguments[0])) {
-      execute("mkdir", current_dir, arguments);
-    } else if (strcmp("cd", arguments[0])) { 
-      execute("cd", current_dir, arguments);
-    } else if (strcmp("cat", arguments[0])) {
-      execute("cat", current_dir, arguments);
-    } /*else if (strcmp("mv", arguments[0])) {
+    execute(arguments[0], current_dir, arguments);
+
+     /*else if (strcmp("mv", arguments[0])) {
       mv(arguments[1], arguments[2], current_dir);
     } else if (strcmp("cp", arguments[0])) {
       cp(arguments[1], arguments[2], current_dir);
     } else if (strcmp("clear", arguments[0])) {
       clearscreen();
-    }*/ else {
+    } else {
       puts("unknown command\r\n");
-    }
+    } */
   }
 }
 void splitString(char* string, char* return_array[]) {
@@ -90,6 +84,13 @@ void execute(char *exec_name, byte current_dir, char *arguments[]) {
 
   metadata.node_name = exec_name;
   metadata.parent_index = 0x00; 
+
+  // check if file exists
+  if (get_node(&metadata) == FS_R_NODE_NOT_FOUND) {
+    puts("Unknown command\r\n");
+    return;
+  }
+
 
   msg.current_directory = current_dir;
   strcpy(msg.arg1, arguments[1]);
