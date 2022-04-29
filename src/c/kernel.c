@@ -11,7 +11,7 @@
 
 int main() {
   struct file_metadata metadata;
-  // struct message msg;
+  struct message msg;
 
   fillMap();
   makeInterrupt21();
@@ -21,7 +21,8 @@ int main() {
   metadata.node_name = "shell";
   // msg.cursor_x = 0;
   // msg.cursor_y = 0;
-  // writeSector(&msg, 0x104);
+  msg.current_directory = 0xFF;
+  writeSector(&msg, 0x104);
   executeProgram(&metadata, 0x2000);
 }
 
