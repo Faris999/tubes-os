@@ -41,6 +41,7 @@ void ls(char *dir_name, byte current_dir) {
     }
     if (node_buffer[i].sector_entry_index == FS_NODE_S_IDX_FOLDER) {
       color = 0x0B;
+      puts("* ");
     } else {
       color = 0x0F;
     }

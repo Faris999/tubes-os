@@ -46,8 +46,14 @@ void cd(char *dir_name, byte *current_dir) {
   for (i = 0; i < 64; i++) {
     if (node_fs_buffer.nodes[i].parent_node_index == *current_dir) {
       if (strcmp(dir_name, node_fs_buffer.nodes[i].name)) {
-        *current_dir = i;
-        return;
+          if (node_fs_buffer.nodes[i].sector_entry_index == FS_NODE_S_IDX_FOLDER) {
+            puts("Changing to directory\r\n");
+            *current_dir = i;
+            return;
+          } else {
+            puts("Not a directory\r\n");
+            return;
+          }
       }
     }
   }

@@ -44,15 +44,21 @@ int main() {
     }
     puts("\r\n");
 
+    if (startswith("./", arguments[0])) {
+      // execute local file
+      execute(arguments[0] + 2, current_dir, arguments);
+      continue;
+    }
+
     if (strcmp("ls", arguments[0])) {
       execute("ls", current_dir, arguments);
     } else if (strcmp("mkdir", arguments[0])) {
       execute("mkdir", current_dir, arguments);
     } else if (strcmp("cd", arguments[0])) { 
       execute("cd", current_dir, arguments);
-    }/* else if (strcmp("cat", arguments[0])) {
-      cat(arguments[1], current_dir);
-    } else if (strcmp("mv", arguments[0])) {
+    } else if (strcmp("cat", arguments[0])) {
+      execute("cat", current_dir, arguments);
+    } /*else if (strcmp("mv", arguments[0])) {
       mv(arguments[1], arguments[2], current_dir);
     } else if (strcmp("cp", arguments[0])) {
       cp(arguments[1], arguments[2], current_dir);
@@ -77,6 +83,7 @@ void splitString(char* string, char* return_array[]) {
     string++;
   }
 }
+
 void execute(char *exec_name, byte current_dir, char *arguments[]) {
   struct file_metadata metadata;
   struct message msg;
