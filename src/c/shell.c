@@ -42,13 +42,7 @@ int main() {
       puts(arguments[i]);
       puts(" ");
     }
-    puts("\r\n");
-
-    if (startswith("./", arguments[0])) {
-      // execute local file
-      execute(arguments[0] + 2, current_dir, arguments);
-      continue;
-    }
+    puts("\r\n"); 
 
     execute(arguments[0], current_dir, arguments);
 
@@ -84,6 +78,11 @@ void execute(char *exec_name, byte current_dir, char *arguments[]) {
 
   metadata.node_name = exec_name;
   metadata.parent_index = 0x00; 
+
+  if (startswith("./", exec_name)) {
+    metadata.parent_index = current_dir;
+    metadata.node_name = &exec_name[2];
+  }
 
   // check if file exists
   if (get_node(&metadata) == FS_R_NODE_NOT_FOUND) {
