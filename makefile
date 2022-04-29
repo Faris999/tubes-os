@@ -8,7 +8,7 @@ KERNEL_OBJECTS = $(patsubst %.c, $(OBJ)/%.o, $(KERNEL_SOURCES))
 LIBRARY_SOURCES = string.c textio.c fileio.c program.c
 LIBRARY_OBJECTS = $(patsubst %.c, $(OBJ)/%.o, $(LIBRARY_SOURCES))
 
-EXECUTABLE_SOURCES = shell.c ls.c mkdir.c cd.c cat.c cp.c
+EXECUTABLE_SOURCES = shell.c ls.c mkdir.c cd.c cat.c cp.c mv.c
 EXECUTABLE_OBJECTS = $(patsubst %.c, $(OBJ)/%.o, $(EXECUTABLE_SOURCES))
 EXECUTABLES = $(patsubst $(OBJ)/%.o, $(BIN)/%, $(EXECUTABLE_OBJECTS))
 
