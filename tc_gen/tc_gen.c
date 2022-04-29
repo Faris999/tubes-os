@@ -16,26 +16,26 @@ extern void create_folder(byte buf[2880][512], char *fname, byte parent_idx);
 
 void tc_A(byte buf[2880][512]) {
     create_folder(buf, "folder1", 0xFF);
-    create_folder(buf, "folder2", 0);
-    create_folder(buf, "folder3", 0);
-    insert_file(buf, "file_src/tc_a/hehe", 2);
-    insert_file(buf, "file_src/tc_a/haha", 2);
-    insert_file(buf, "file_src/tc_a/hoho", 2);
-    create_folder(buf, "folder4", 0);
-    create_folder(buf, "folder5", 6);
-    insert_file(buf, "file_src/tc_a/keos", 6);
-    insert_file(buf, "file_src/tc_a/keoskeos", 6);
+    create_folder(buf, "folder2", 8);
+    create_folder(buf, "folder3", 8);
+    insert_file(buf, "file_src/tc_a/hehe", 10);
+    insert_file(buf, "file_src/tc_a/haha", 10);
+    insert_file(buf, "file_src/tc_a/hoho", 10);
+    create_folder(buf, "folder4", 8);
+    create_folder(buf, "folder5", 14);
+    insert_file(buf, "file_src/tc_a/keos", 14);
+    insert_file(buf, "file_src/tc_a/keoskeos", 14);
 
-    insert_file(buf, "file_src/tc_a/file3", 0);
-    insert_file(buf, "file_src/tc_a/file1", 0);
-    insert_file(buf, "file_src/tc_a/file2", 0);
+    insert_file(buf, "file_src/tc_a/file3", 8);
+    insert_file(buf, "file_src/tc_a/file1", 8);
+    insert_file(buf, "file_src/tc_a/file2", 8);
     insert_file(buf, "file_src/tc_a/file_luar", 0xFF);
 }
 
 void tc_B(byte buf[2880][512]) {
     insert_file(buf, "file_src/tc_b/file_idx_0", 0xFF);
     create_folder(buf, "folder1", 0xFF);
-    for (int i = 1; i < 62; i++) {
+    for (int i = 9; i < 62; i++) {
         char str_buf[16];
         sprintf(str_buf, "folder%d", i + 1);
         create_folder(buf, str_buf, i);
@@ -45,16 +45,16 @@ void tc_B(byte buf[2880][512]) {
 
 void tc_C(byte buf[2880][512]) {
     create_folder(buf, "A", 0xFF);
-    create_folder(buf, "test", 0);
-    create_folder(buf, "A11", 1);
+    create_folder(buf, "test", 8);
+    create_folder(buf, "A11", 9);
     create_folder(buf, "B", 0xFF);
 
-    create_folder(buf, "A2", 0);
-    create_folder(buf, "test", 4);
+    create_folder(buf, "A2", 8);
+    create_folder(buf, "test", 12);
     create_folder(buf, "C", 0xFF);
-    create_folder(buf, "C1", 6);
-    create_folder(buf, "C11", 7);
-    create_folder(buf, "test", 8);
+    create_folder(buf, "C1", 14);
+    create_folder(buf, "C11", 15);
+    create_folder(buf, "test", 16);
 }
 
 void tc_D(byte buf[2880][512]) {
