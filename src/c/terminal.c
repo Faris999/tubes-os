@@ -24,8 +24,8 @@ void moveCursor() {
 }
 
 void printchar(char a) {
-  // interrupt(0x10, 0x0900 + a, 0x000A, 0x1, 0x0);
-  printCharColor(a, 0x0F);
+    interrupt(0x10, 0x0e00 + a, 0x0000, 0x0, 0x0);
+  // printCharColor(a, 0x0F);
 }
 
 void printCharColor(char a, byte color) {
@@ -89,14 +89,14 @@ void println(char *string) {
 }
 
 void printString(char *string) {
-  printStringColor(string, 0x0F);
-}
+  // printStringColor(string, 0x0F);
+// }
 
-void printStringColor(char *string, byte color) {
+// void printStringColor(char *string, byte color) {
   int i;
   for (i = 0; i < strlen(string); i++) {
-    // interrupt(0x10, 0x0e00 + string[i], 0x0000, 0x0, 0x0);
-    printCharColor(string[i], color);
+    interrupt(0x10, 0x0e00 + string[i], 0x0000, 0x0, 0x0);
+    // printCharColor(string[i], color);
   }
 }
 
@@ -113,6 +113,7 @@ void readString(char *string) {
     if (AL == 0x8 && i > 0) {
       string[--i] = 0x0;
       printchar(0x8); 
+      interrupt(0x10, 0x0a20, 0x0, 0x1, 0x0);
     }
     if (AL == 0xd) {
       printchar(0xd);
@@ -138,6 +139,6 @@ void clearScreen() {
   //interrupt(0x10, 0x0003, 0x00, 0x00);
   // move cursor to top left
   interrupt(0x10, 0x0200, 0x03, 0x0, 0x0000);
-  cursor_x = 0;
-  cursor_y = 0;
+  // cursor_x = 0;
+  // cursor_y = 0;
 }

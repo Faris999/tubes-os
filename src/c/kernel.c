@@ -29,11 +29,11 @@ void handleInterrupt21(int AX, int BX, int CX, int DX) {
   printString("interrupt21");
   switch (AX) {
     case 0x0:
-      if (CX == 0x0) {
+      // if (CX == 0x0) {
         printString(BX);
-      } else {
-        printStringColor(BX, CX);
-      }
+      // } else {
+        // printStringColor(BX, CX);
+      // }
       break;
     case 0x1:
       readString(BX);
