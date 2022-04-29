@@ -8,27 +8,9 @@ void ls(char *dir_name, byte current_dir);
 void get_children(byte current_dir, struct node_entry *node_buffer); 
 
 int main() {
-    // struct message msg;
-    // char buf[64];
-    // get_message(&msg);
-    // char *buffer = "from ls";
-
-    byte current_dir = 0xFF;
-
-
-    // writeSector(buffer, 0x107);
-    
-    // log("from ls", 0x107);
-    // syncCursorFromMessage();
-    // log("from ls sync cursor1", 0x107);
-    puts("\r\n\r\n");
-    ls("", current_dir);
-        // puts("Press enter to continue...");
-        // gets(buf);
-        // clearScreen();
-    // while (true);
-    // syncCursorToMessage();
-    // log("from ls sync cursor2", 0x107);
+    struct message msg;
+    get_message(&msg);
+    ls(msg.arg1, msg.current_directory);
     exit();
 }
 
@@ -63,7 +45,7 @@ void ls(char *dir_name, byte current_dir) {
       color = 0x0F;
     }
     putsColor(node_buffer[i].name, color);
-    puts("");
+    puts("\r\n");
   }
 }
 

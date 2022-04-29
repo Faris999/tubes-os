@@ -7,15 +7,20 @@
 
 
 void printCWD(char *path_str, byte current_dir); 
-void execute(char *exec_name, byte current_dir);
+void execute(char *exec_name, byte current_dir, char *arguments[]);
+void splitString(char* string, char* return_array[]);
 
 int main() {
   char input_buf[64];
   char path_str[128];
   char *arguments[64];
   struct file_metadata metadata;
-  byte current_dir = 0xFF;
+  struct message msg;
+  byte current_dir;
   int i; 
+
+  get_message(&msg);
+  current_dir = msg.current_directory;
 
   
 
@@ -28,25 +33,24 @@ int main() {
     puts("OS@IF2230:");
     printCWD(path_str, current_dir);
     puts("$ ");
-    // clear(input_buf, 64);
+    clear(input_buf, 64);
     gets(input_buf);
-    // clear(arguments, 64);
-    // splitString(input_buf, arguments);
-    // printString("arguments: ");
-    // for (i = 0; i < 3; i++) {
-    //   printString(arguments[i]);
-    //   printString(" ");
-    // }
-    // println("");
+    clear(arguments, 64);
+    splitString(input_buf, arguments);
+    puts("arguments: ");
+    for (i = 0; i < 3; i++) {
+      puts(arguments[i]);
+      puts(" ");
+    }
+    puts("\r\n");
 
-    if (strcmp("ls", input_buf)) {
-        execute("ls", current_dir);
-    //   ls(arguments[1], current_dir);
-    }/* else if (strcmp("mkdir", arguments[0])) {
-      mkdir(arguments[1], current_dir);
-    } else if (strcmp("ls", arguments[0])) { 
-      ls(arguments[1], current_dir);
-    } else if (strcmp("cat", arguments[0])) {
+    if (strcmp("ls", arguments[0])) {
+      execute("ls", current_dir, arguments);
+    } else if (strcmp("mkdir", arguments[0])) {
+      execute("mkdir", current_dir, arguments);
+    } else if (strcmp("cd", arguments[0])) { 
+      execute("cd", current_dir, arguments);
+    }/* else if (strcmp("cat", arguments[0])) {
       cat(arguments[1], current_dir);
     } else if (strcmp("mv", arguments[0])) {
       mv(arguments[1], arguments[2], current_dir);
@@ -54,18 +58,38 @@ int main() {
       cp(arguments[1], arguments[2], current_dir);
     } else if (strcmp("clear", arguments[0])) {
       clearscreen();
-    } else {
-      println("unknown command");
-    } */
+    }*/ else {
+      puts("unknown command\r\n");
+    }
   }
 }
+void splitString(char* string, char* return_array[]) {
+  int i;
 
-void execute(char *exec_name, byte current_dir) {
+  clear(return_array, 64);
+  
+  for (i = 0; i < 64; i++) {
+    return_array[i] = string;
+    while (*string != ' ' && *string != '\0') {
+      string++;
+    }
+    *string = '\0';
+    string++;
+  }
+}
+void execute(char *exec_name, byte current_dir, char *arguments[]) {
   struct file_metadata metadata;
   struct message msg;
 
   metadata.node_name = exec_name;
   metadata.parent_index = 0x00; 
+
+  msg.current_directory = current_dir;
+  strcpy(msg.arg1, arguments[1]);
+  strcpy(msg.arg2, arguments[2]);
+  strcpy(msg.arg3, arguments[3]);
+
+  write_message(&msg);
   // syncCursorToMessage();
   exec(&metadata, 0x3000); 
 }
