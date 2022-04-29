@@ -9,6 +9,7 @@ void get_children(byte current_dir, struct node_entry *node_buffer);
 
 int main() {
     struct message msg;
+    puts("here");
     get_message(&msg);
     ls(msg.arg1, msg.current_directory);
     exit();

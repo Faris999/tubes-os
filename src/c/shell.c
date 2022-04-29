@@ -7,13 +7,17 @@
 
 
 void printCWD(char *path_str, byte current_dir); 
-void execute(char *exec_name, byte current_dir, char *arguments[]);
-void splitString(char* string, char* return_array[]);
+void execute(char *exec_name, byte current_dir, char *arg1, char *arg2, char *rest);
+void splitString(char* string, char *return_array[]);
 
 int main() {
-  char input_buf[64];
+  char input_buf[256];
   char path_str[128];
-  char *arguments[64];
+  char arg1[64];
+  char arg2[64];
+  char arg3[64];
+  char *command;
+  char *rest;
   struct file_metadata metadata;
   struct message msg;
   byte current_dir;
@@ -33,18 +37,78 @@ int main() {
     puts("OS@IF2230:");
     printCWD(path_str, current_dir);
     puts("$ ");
-    clear(input_buf, 64);
+    clear(input_buf, 256);
     gets(input_buf);
-    clear(arguments, 64);
-    splitString(input_buf, arguments);
-    puts("arguments: ");
-    for (i = 0; i < 3; i++) {
-      puts(arguments[i]);
-      puts(" ");
-    }
-    puts("\r\n"); 
+    
 
-    execute(arguments[0], current_dir, arguments);
+    command = input_buf;
+    for (i = 0; i < 64; i++) {
+      if (input_buf[i] == '\0') {
+        rest = input_buf + i;
+        break;
+      }
+      if (startswith(" ; ", input_buf + i)) {
+        input_buf[i] = '\0';
+        rest = input_buf + i + 3;
+        break;
+      }
+    }
+
+    // puts("input_buf: ");
+    // puts(input_buf);
+    // puts("\r\n");
+    // puts("command: ");
+    // puts(command);
+    // puts("\r\n");
+    // puts("rest: ");
+    // puts(rest);
+    // puts("\r\n");
+    
+    clear(arg1, 64);
+    clear(arg2, 64);
+    clear(arg3, 64);
+
+    i = 0;
+    while (command[0] != '\0' && command[0] != ' ') {
+      arg1[i] = command[0];
+      command++;
+      i++;
+    }
+    arg1[i] = '\0';
+
+    if (command[0] == ' ') {
+      command++;
+      i = 0;
+      while (command[0] != '\0' && command[0] != ' ') {
+        arg2[i] = command[0];
+        command++;
+        i++;
+      }
+      arg2[i] = '\0';
+
+      if (command[0] == ' ') {
+        command++;
+        i = 0;
+        while (command[0] != '\0') {
+          arg3[i] = command[0];
+          command++;
+          i++;
+        }
+        arg3[i] = '\0';
+      }
+    }
+
+    // puts("arg1: ");
+    // puts(arg1);
+    // puts("\r\n");
+    // puts("arg2: ");
+    // puts(arg2);
+    // puts("\r\n");
+    // puts("arg3: ");
+    // puts(arg3);
+    // puts("\r\n");
+    
+    execute(arg1, current_dir, arg2, arg3, rest);
 
      /*else if (strcmp("mv", arguments[0])) {
       mv(arguments[1], arguments[2], current_dir);
@@ -57,22 +121,31 @@ int main() {
     } */
   }
 }
-void splitString(char* string, char* return_array[]) {
-  int i;
+void splitString(char* string, char *return_array[]) {
+  int i = 0;
+  char *empty = "";
+  for (i = 0; i < 3; i++) {
+    return_array[i] = 0;
+  }
 
-  clear(return_array, 64);
-  
-  for (i = 0; i < 64; i++) {
+  while (*string != '\0') {
+    puts("a");
     return_array[i] = string;
+    puts("b");
     while (*string != ' ' && *string != '\0') {
       string++;
     }
-    *string = '\0';
-    string++;
+    if (*string == ' ') {
+      *string = '\0';
+      string++;
+    }
+    i++;
   }
+  puts("return_array: ");
+  puts(return_array[0]);
 }
 
-void execute(char *exec_name, byte current_dir, char *arguments[]) {
+void execute(char *exec_name, byte current_dir, char *arg1, char *arg2, char *rest) {
   struct file_metadata metadata;
   struct message msg;
 
@@ -92,10 +165,11 @@ void execute(char *exec_name, byte current_dir, char *arguments[]) {
 
 
   msg.current_directory = current_dir;
-  strcpy(msg.arg1, arguments[1]);
-  strcpy(msg.arg2, arguments[2]);
-  strcpy(msg.arg3, arguments[3]);
-
+  strcpy(msg.arg1, arg1);
+  strcpy(msg.arg2, arg2);
+  // strcpy(msg.arg3, arguments[3]);
+  strcpy(msg.other, rest);
+  msg.next_program_segment = 0x4000;
   write_message(&msg);
   // syncCursorToMessage();
   exec(&metadata, 0x3000); 
