@@ -4,6 +4,7 @@
 #include "header/textio.h"
 #include "header/fileio.h"
 #include "header/string.h"
+#include "header/std_lib.h"
 
 void cp(char *src, char *dst, byte current_dir);
 
@@ -11,7 +12,6 @@ int main() {
     struct message msg;
     get_message(&msg);
     cp(msg.arg1, msg.arg2, msg.current_directory);
-    puts("\r\n");
     exit();
 }
 
@@ -43,6 +43,8 @@ void cp(char *src, char *dst, byte current_dir) {
       puts("Unknown error\r\n");
       return;
   }
+
+  clear(buffer, 8192);
 
   switch (return_code) {
     case FS_SUCCESS:
