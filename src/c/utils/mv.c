@@ -1,4 +1,15 @@
-#include "../header/kernel.h"
+#include "core.h"
+
+void mv(char *src, char *dst, byte current_dir);
+
+int main() {
+  struct message msg;
+
+  read_message(&msg);
+  mv(msg.arg1, msg.arg2, msg.current_directory);
+  puts("exiting\r\n");
+  exit();
+}
 
 void mv_to_parent(char *src, char *dst, byte current_dir);
 void mv_to_root(char *src, char *dst, byte current_dir);
@@ -51,20 +62,20 @@ enum fs_retcode get_node(struct file_metadata *metadata) {
 
 void mv(char *src, char *dst, byte current_dir) {
   if (strlen(src) == 0) {
-    printString("Source file name is empty");
+    puts("Source file name is empty");
     return;
   }
 
   if (strlen(dst) == 0) {
-    printString("Destination file name is empty");
+    puts("Destination file name is empty");
     return;
   } 
 
   if (startswith("/", dst)) {
-    printString("Moving to root directory");
+    puts("Moving to root directory");
     mv_to_root(src, dst+1, current_dir);
   } else if (startswith("../", dst)) {
-    printString("Moving to parent directory");
+    puts("Moving to parent directory");
     mv_to_parent(src, dst+3, current_dir);
   } else {
     mv_to_child(src, dst, current_dir);
@@ -93,10 +104,10 @@ void mv_to_parent(char *src, char *dst, byte current_dir) {
       }
       break;
     case FS_R_NODE_NOT_FOUND:
-      printString("Source file not found");
+      puts("Source file not found");
       return;
     default:
-      printString("Error while getting source file");
+      puts("Error while getting source file");
       return;
   }
 
@@ -111,20 +122,20 @@ void mv_to_parent(char *src, char *dst, byte current_dir) {
   // Check if destination already exists
   switch (get_node(&metadata)) {
     case FS_R_TYPE_IS_FOLDER:
-      printString("Moving to folder");
+      puts("Moving to folder");
       dst_index = metadata.node_index;
       if (file_exists(src, metadata.node_index)) {
-        printString("Destination file already exists");
+        puts("Destination file already exists");
         return;
       }
       break;
     case FS_SUCCESS:
-      printString("Destination file already exists");
+      puts("Destination file already exists");
       return;
     case FS_R_NODE_NOT_FOUND:
       break;
     default:
-      printString("Error while getting destination file");
+      puts("Error while getting destination file");
       return;
   }
 
@@ -151,10 +162,10 @@ void mv_to_root(char *src, char *dst, byte current_dir) {
       src_index = metadata.node_index;
       break;
     case FS_R_NODE_NOT_FOUND:
-      printString("Source file not found");
+      puts("Source file not found");
       return;
     default:
-      printString("Error reading source file");
+      puts("Error reading source file");
       return;
   }
 
@@ -173,7 +184,7 @@ void mv_to_root(char *src, char *dst, byte current_dir) {
       dst_index = metadata.node_index;
       break;
     case FS_SUCCESS:
-      printString("Destination file already exists");
+      puts("Destination file already exists");
       return;
   }
 
@@ -200,10 +211,10 @@ void mv_to_child(char *src, char *dst, byte current_dir) {
       src_index = metadata.node_index;
       break;
     case FS_R_NODE_NOT_FOUND:
-      printString("Source file not found");
+      puts("Source file not found");
       return;
     default:
-      printString("Error reading source file");
+      puts("Error reading source file");
       return;
   }
 
@@ -214,21 +225,21 @@ void mv_to_child(char *src, char *dst, byte current_dir) {
 
   switch (get_node(&metadata)) {
     case FS_R_TYPE_IS_FOLDER:
-      printString("Moving to folder");
+      puts("Moving to folder");
       node_buffer.parent_node_index = metadata.node_index;
       if (file_exists(src, metadata.node_index)) {
-        printString("Destination file already exists");
+        puts("Destination file already exists");
         return;
       }
       break;
     case FS_SUCCESS:
       // File exists
-      printString("Destination file already exists");
+      puts("Destination file already exists");
       break;
     case FS_R_NODE_NOT_FOUND:
       // File not found
       // Rename file
-      printString("Renaming");
+      puts("Renaming");
       clear(node_buffer.name, 14);
       strcpy(node_buffer.name, dst);
       break;

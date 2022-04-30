@@ -5,11 +5,15 @@ void printChar(char c);
 void printCWD(char *path_str, byte current_directory);
 
 int main() {
+  struct file_metadata metadata;
   fillMap();
   clearScreen();
   makeInterrupt21();
   
-  shell();
+  metadata.node_name = "shell";
+  metadata.parent_index = 0;
+  executeProgram(&metadata, 0x2000);
+  // shell();
 }
 
 void handleInterrupt21(int AX, int BX, int CX, int DX) {
@@ -31,6 +35,9 @@ void handleInterrupt21(int AX, int BX, int CX, int DX) {
       break;
     case 0x5:
       write(BX, CX);
+      break;
+    case 0x6:
+      executeProgram(BX, CX);
       break;
     default:
       printString("Invalid interrupt");
@@ -324,110 +331,23 @@ void fillMap() {
   writeSector(&map_fs_buffer, FS_MAP_SECTOR_NUMBER);
 }
 
-// SHELL
+// PROGRAM
 
-void printCWD(char *path_str, byte current_dir) {
-  struct node_filesystem node_fs_buffer;
-  struct node_entry node_buffer;
-  int i;
-  byte index_path[32];
-
-  readSector(&(node_fs_buffer.nodes[0]), FS_NODE_SECTOR_NUMBER);
-  readSector(&(node_fs_buffer.nodes[32]), FS_NODE_SECTOR_NUMBER + 1);
-
-  clear(path_str, 128);
-  strcat(path_str, "/");
-
-  for (i = 0; i < 32; i++) {
-    index_path[i] = FS_NODE_P_IDX_ROOT;
-  }
-
-  while (current_dir != FS_NODE_P_IDX_ROOT) {
-    node_buffer = node_fs_buffer.nodes[current_dir]; 
-    index_path[--i] = current_dir;
-    current_dir = node_buffer.parent_node_index;
-  }
-
-  for (i = 0; i < 32; i++) {
-    if (index_path[i] == FS_NODE_P_IDX_ROOT) {
-      continue;
+void executeProgram(struct file_metadata *metadata, int segment) {
+  enum fs_retcode fs_ret;
+  byte buf[8192];
+  metadata->buffer = buf;
+  read(metadata, &fs_ret);
+  if (fs_ret == FS_SUCCESS) {
+    int i = 0;
+    for (i = 0; i < 8192; i++) {
+      if (i < metadata->filesize)
+        putInMemory(segment, i, metadata->buffer[i]);
+      else
+        putInMemory(segment, i, 0x00);
     }
-    node_buffer = node_fs_buffer.nodes[index_path[i]];
-    strcat(path_str, node_buffer.name);
-    strcat(path_str, "/");
-  }
-
-  printString(path_str);
-}
-
-void splitArguments(char *input_buf, char **program, char **arg1, char **arg2) {
-  *program = input_buf;
-  
-  while (*input_buf != ' ' && *input_buf != '\0') {
-    input_buf++;
-  }
-  *input_buf = '\0';
-  input_buf++;
-
-  *arg1 = input_buf;
-
-  while (*input_buf != ' ' && *input_buf != '\0') {
-    input_buf++;
-  }
-  *input_buf = '\0';
-  input_buf++;
-
-  *arg2 = input_buf;
-
-  while (*input_buf != ' ' && *input_buf != '\0') {
-    input_buf++;
-  }
-  *input_buf = '\0';
-}
-
-void shell() {
-  char input_buf[64];
-  char path_str[128];
-  char *program;
-  char *arg1;
-  char *arg2;
-  byte current_dir = FS_NODE_P_IDX_ROOT;
-
-  while (true) {
-    printString("OS@IF2230:");
-    printCWD(path_str, current_dir);
-    printHex(current_dir);
-    printString("$ ");
-    clear(input_buf, 64);
-    readString(input_buf);
-    splitArguments(input_buf, &program, &arg1, &arg2);
-
-    printString("program: ");
-    printString(program);
-    printString("\r\n");
-    printString("arg1: ");
-    printString(arg1);
-    printString("\r\n");
-    printString("arg2: ");
-    printString(arg2);
-    printString("\r\n");
-
-
-    if (strcmp("cd", program)) {
-      cd(arg1, &current_dir);
-    } else if (strcmp("ls", program)) {
-      ls(arg1, current_dir);
-    } else if (strcmp("mkdir", program)) {
-      mkdir(arg1, current_dir);
-    } else if (strcmp("cat", program)) {
-      cat(arg1, current_dir);
-    } else if (strcmp("cp", program)) {
-      cp(arg1, arg2, current_dir);
-    } else if (strcmp("mv", program)) {
-      mv(arg1, arg2, current_dir);
-    } else {
-      printString("Unknown command\r\n");
-    }
-  }
+    launchProgram(segment);
+  } else
+    printString("exec: file not found\r\n");
 }
 

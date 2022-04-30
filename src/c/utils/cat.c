@@ -1,4 +1,15 @@
-#include "../header/kernel.h"
+#include "core.h"
+
+void cat(char *file_name, byte current_dir);
+
+int main() {
+  struct message msg;
+
+  read_message(&msg);
+  cat(msg.arg1, msg.current_directory);
+  puts("exiting\r\n");
+  exit();
+}
 
 void cat(char *file_name, byte current_dir) {
   struct file_metadata metadata;
@@ -20,13 +31,13 @@ void cat(char *file_name, byte current_dir) {
     case FS_SUCCESS:
       break;
     case FS_R_NODE_NOT_FOUND:
-      printString("File not found\r\n");
+      puts("File not found\r\n");
       return;
     case FS_R_TYPE_IS_FOLDER:
-      printString("File is a folder\r\n");
+      puts("File is a folder\r\n");
       return;
     default:
-      printString("Unknown error\r\n");
+      puts("Unknown error\r\n");
       return;
   }
 
@@ -37,10 +48,10 @@ void cat(char *file_name, byte current_dir) {
       break;
     }
     if (buffer[i] == '\n') {
-      printString("\r");
+      puts("\r");
     }
     string_buf[0] = buffer[i];
-    printString(string_buf);
+    puts(string_buf);
   }
-  printString("\r\n"); 
+  puts("\r\n"); 
 }

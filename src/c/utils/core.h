@@ -1,0 +1,6 @@
+#include "../header/filesystem.h"
+#include "../header/fileio.h"
+#include "../header/string.h"
+#include "../header/textio.h"
+#include "../header/program.h"
+#include "../header/std_lib.h"

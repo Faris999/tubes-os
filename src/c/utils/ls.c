@@ -1,4 +1,22 @@
-#include "../header/kernel.h"
+#include "core.h"
+
+void ls(char *dir_name, byte current_dir);
+
+int main() {
+  struct message msg;
+
+  read_message(&msg);
+
+  // puts("arg1: ");
+  // puts(msg.arg1);
+  // puts("\r\n");
+  // puts("current_directory: ");
+  // putsHex(msg.current_directory);
+  // puts("\r\n");
+  ls(msg.arg1, msg.current_directory);
+  puts("exiting\r\n");
+  exit();
+}
 
 void ls(char *dir_name, byte current_dir) {
   struct node_filesystem node_fs_buffer;
@@ -21,7 +39,7 @@ void ls(char *dir_name, byte current_dir) {
   }
 
   if (i == 64) {
-    printString("Directory not found\r\n");
+    puts("Directory not found\r\n");
     return;
   }
 
@@ -31,14 +49,13 @@ void ls(char *dir_name, byte current_dir) {
     }
     if (node_fs_buffer.nodes[i].parent_node_index == current_dir) {
       if (node_fs_buffer.nodes[i].sector_entry_index == FS_NODE_S_IDX_FOLDER) {
-        printString(node_fs_buffer.nodes[i].name);
-        printString("/");
+        puts(node_fs_buffer.nodes[i].name);
+        puts("/");
       } else {
-        printString(node_fs_buffer.nodes[i].name);
+        puts(node_fs_buffer.nodes[i].name);
       }
-      printString(" (");
-      printHex(i);
-      printString(")\r\n");
+      puts(" (");
+      puts(")\r\n");
     }
   }
 }

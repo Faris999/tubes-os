@@ -1,4 +1,15 @@
-#include "../header/kernel.h"
+#include "core.h" 
+
+void cp(char *src, char *dst, byte current_dir);
+
+int main() {
+  struct message msg;
+
+  read_message(&msg);
+  cp(msg.arg1, msg.arg2, msg.current_directory);
+  puts("exiting\r\n");
+  exit();
+}
 
 void cp(char *src, char *dst, byte current_dir) {
   struct file_metadata metadata;
@@ -19,13 +30,13 @@ void cp(char *src, char *dst, byte current_dir) {
       write(&metadata, &return_code);
       break;
     case FS_R_NODE_NOT_FOUND:
-      printString("File not found\r\n");
+      puts("File not found\r\n");
       return;
     case FS_R_TYPE_IS_FOLDER:
-      printString("Copying folder not supported\r\n");
+      puts("Copying folder not supported\r\n");
       return;
     default:
-      printString("Unnown error\r\n");
+      puts("Unnown error\r\n");
       return;
   }
 
@@ -33,22 +44,22 @@ void cp(char *src, char *dst, byte current_dir) {
     case FS_SUCCESS:
       break;
     case FS_W_FILE_ALREADY_EXIST:
-      printString("File already exists\r\n");
+      puts("File already exists\r\n");
       return;
     case FS_W_INVALID_FOLDER:
-      printString("Invalid folder\r\n");
+      puts("Invalid folder\r\n");
       return;
     case FS_W_MAXIMUM_NODE_ENTRY:
-      printString("Maximum node entry reached\r\n");
+      puts("Maximum node entry reached\r\n");
       return;
     case FS_W_MAXIMUM_SECTOR_ENTRY:
-      printString("Maximum sector entry reached\r\n");
+      puts("Maximum sector entry reached\r\n");
       return;
     case FS_W_NOT_ENOUGH_STORAGE:
-      printString("Not enough storage\r\n");
+      puts("Not enough storage\r\n");
       return;
     default:
-      printString("Unknown error");
+      puts("Unknown error");
       return;
   }
 }

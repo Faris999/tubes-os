@@ -1,4 +1,15 @@
-#include "../header/kernel.h"
+#include "core.h"
+
+void mkdir(char *dir_name, byte current_dir);
+
+int main() {
+  struct message msg;
+
+  read_message(&msg);
+  mkdir(msg.arg1, msg.current_directory);
+  puts("exiting\r\n");
+  exit();
+}
 
 void mkdir(char *dir_name, byte current_dir) {
   struct file_metadata metadata;
@@ -11,22 +22,22 @@ void mkdir(char *dir_name, byte current_dir) {
 
   switch (return_code) {
     case FS_SUCCESS:
-      printString("Directory created\r\n");
+      puts("Directory created\r\n");
       break;
     case FS_W_FILE_ALREADY_EXIST:
-      printString("Directory already exists\r\n");
+      puts("Directory already exists\r\n");
       break;
     case FS_W_INVALID_FOLDER:
-      printString("Invalid folder\r\n");
+      puts("Invalid folder\r\n");
       break;
     case FS_W_MAXIMUM_NODE_ENTRY:
-      printString("Maximum node entry reached\r\n");
+      puts("Maximum node entry reached\r\n");
       break;
     case FS_W_MAXIMUM_SECTOR_ENTRY:
-      printString("Maximum sector entry reached\r\n");
+      puts("Maximum sector entry reached\r\n");
       break;
     default:
-      printString("Unknown error\r\n");
+      puts("Unknown error\r\n");
       break;
   }
 }
