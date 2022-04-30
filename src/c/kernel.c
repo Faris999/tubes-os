@@ -331,6 +331,7 @@ void printCWD(char *path_str, byte current_dir) {
   struct node_filesystem node_fs_buffer;
   struct node_entry node_buffer;
   int i;
+  byte index_path[32];
 
   readSector(&(node_fs_buffer.nodes[0]), FS_NODE_SECTOR_NUMBER);
   readSector(&(node_fs_buffer.nodes[32]), FS_NODE_SECTOR_NUMBER + 1);
@@ -338,11 +339,23 @@ void printCWD(char *path_str, byte current_dir) {
   clear(path_str, 128);
   strcat(path_str, "/");
 
+  for (i = 0; i < 32; i++) {
+    index_path[i] = FS_NODE_P_IDX_ROOT;
+  }
+
   while (current_dir != FS_NODE_P_IDX_ROOT) {
-    node_buffer = node_fs_buffer.nodes[current_dir];
+    node_buffer = node_fs_buffer.nodes[current_dir]; 
+    index_path[--i] = current_dir;
+    current_dir = node_buffer.parent_node_index;
+  }
+
+  for (i = 0; i < 32; i++) {
+    if (index_path[i] == FS_NODE_P_IDX_ROOT) {
+      continue;
+    }
+    node_buffer = node_fs_buffer.nodes[index_path[i]];
     strcat(path_str, node_buffer.name);
     strcat(path_str, "/");
-    current_dir = node_buffer.parent_node_index;
   }
 
   printString(path_str);
@@ -351,7 +364,7 @@ void printCWD(char *path_str, byte current_dir) {
 void shell() {
   char input_buf[64];
   char path_str[128];
-  byte current_dir = FS_NODE_P_IDX_ROOT;
+  byte current_dir = 7;
 
   while (true) {
     printString("OS@IF2230:");
