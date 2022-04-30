@@ -42,6 +42,7 @@ struct file_metadata {
     byte *buffer;
     char *node_name;
     byte parent_index;
+    byte node_index;
     unsigned int filesize;
 };
 

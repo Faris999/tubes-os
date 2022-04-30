@@ -39,6 +39,19 @@ void handleInterrupt21(int AX, int BX, int CX, int DX) {
 
 // TERMINAL
 
+void printHex(int a) {
+  int i;
+  char buf[5];
+  char *hex = "0123456789ABCDEF";
+  printString("0x");
+  for (i = 3; i >= 0; i--) {
+    buf[i] = hex[a % 16];
+    a /= 16;
+  }
+  buf[4] = '\0';
+  printString(buf);
+}
+
 void printChar(char c) {
   interrupt(0x10, 0x0e00 + c, 0, 0, 0);
 }
@@ -300,7 +313,7 @@ void fillMap() {
 
   readSector(&map_fs_buffer, FS_MAP_SECTOR_NUMBER);
 
-  for (i = 0; i < 16; i++) {
+  for (i = 0; i < 17; i++) {
     map_fs_buffer.is_filled[i] = 1;
   }
 
@@ -312,20 +325,6 @@ void fillMap() {
 }
 
 // SHELL
-
-void strcat(char *dest, char *src) {
-  int i, j;
-
-  for (i = 0; dest[i] != '\0'; i++) {
-    ;
-  }
-
-  for (j = 0; src[j] != '\0'; j++) {
-    dest[i + j] = src[j];
-  }
-
-  dest[i + j] = '\0';
-}
 
 void printCWD(char *path_str, byte current_dir) {
   struct node_filesystem node_fs_buffer;
@@ -361,19 +360,71 @@ void printCWD(char *path_str, byte current_dir) {
   printString(path_str);
 }
 
+void splitArguments(char *input_buf, char **program, char **arg1, char **arg2) {
+  *program = input_buf;
+  
+  while (*input_buf != ' ' && *input_buf != '\0') {
+    input_buf++;
+  }
+  *input_buf = '\0';
+  input_buf++;
+
+  *arg1 = input_buf;
+
+  while (*input_buf != ' ' && *input_buf != '\0') {
+    input_buf++;
+  }
+  *input_buf = '\0';
+  input_buf++;
+
+  *arg2 = input_buf;
+
+  while (*input_buf != ' ' && *input_buf != '\0') {
+    input_buf++;
+  }
+  *input_buf = '\0';
+}
+
 void shell() {
   char input_buf[64];
   char path_str[128];
-  byte current_dir = 7;
+  char *program;
+  char *arg1;
+  char *arg2;
+  byte current_dir = FS_NODE_P_IDX_ROOT;
 
   while (true) {
     printString("OS@IF2230:");
     printCWD(path_str, current_dir);
+    printHex(current_dir);
     printString("$ ");
+    clear(input_buf, 64);
     readString(input_buf);
+    splitArguments(input_buf, &program, &arg1, &arg2);
 
-    if (strcmp(input_buf, "cd")) {
+    printString("program: ");
+    printString(program);
+    printString("\r\n");
+    printString("arg1: ");
+    printString(arg1);
+    printString("\r\n");
+    printString("arg2: ");
+    printString(arg2);
+    printString("\r\n");
 
+
+    if (strcmp("cd", program)) {
+      cd(arg1, &current_dir);
+    } else if (strcmp("ls", program)) {
+      ls(arg1, current_dir);
+    } else if (strcmp("mkdir", program)) {
+      mkdir(arg1, current_dir);
+    } else if (strcmp("cat", program)) {
+      cat(arg1, current_dir);
+    } else if (strcmp("cp", program)) {
+      cp(arg1, arg2, current_dir);
+    } else if (strcmp("mv", program)) {
+      mv(arg1, arg2, current_dir);
     } else {
       printString("Unknown command\r\n");
     }

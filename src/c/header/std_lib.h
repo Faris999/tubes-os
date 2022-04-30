@@ -16,6 +16,8 @@ void memcpy(byte *dest, byte *src, unsigned int n);
 unsigned int strlen(char *string);
 // Mengembalikan panjang suatu null terminated string
 
+void strcat(char *dest, char *src);
+bool startswith(char *prefix, char *string);
 bool strcmp(char *s1, char *s2);
 // Mengembalikan true jika string sama
 

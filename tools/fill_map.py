@@ -7,7 +7,7 @@ def fill_map():
     map_data = read_sector(MAP_SECTOR_NUMBER)
     
     # Bootloader and kernel
-    for i in range(16):
+    for i in range(17):
         map_data[i] = 1
     
     # Unreadable sectors
