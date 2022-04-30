@@ -5,9 +5,9 @@
 ;kernel.asm contains assembly functions that you can use in your kernel
 
 global _putInMemory
-global _interrupt
 global _makeInterrupt21
 extern _handleInterrupt21
+global _launchProgram
 
 ;void putInMemory (int segment, int address, byte b)
 _putInMemory:
@@ -23,27 +23,21 @@ _putInMemory:
 	pop bp
 	ret
 
-;int interrupt (int number, int AX, int BX, int CX, int DX)
-_interrupt:
-	push bp
-	mov bp,sp
-	mov ax,[bp+4]	;get the interrupt number in AL
-	push ds		;use self-modifying code to call the right interrupt
-	mov bx,cs
-	mov ds,bx
-	mov si,intr
-	mov [si+1],al	;change the 00 below to the contents of AL
-	pop ds
-	mov ax,[bp+6]	;get the other parameters AX, BX, CX, and DX
-	mov bx,[bp+8]
-	mov cx,[bp+10]
-	mov dx,[bp+12]
+_launchProgram:
+	mov bp, sp
+	mov bx, [bp+2]
+	mov ax, cs
+	mov ds, ax
+	mov si, jump
+	mov [si+3], bx
+	mov ds, bx
+	mov ss, bx
+	mov es, bx
+	mov sp, 0xfff0
+	mov bp, 0xfff0
 
-intr:	int 0x00	;call the interrupt (00 will be changed above)
+jump: jmp 0x0000:0x0000
 
-	mov ah,0	;we only want AL returned
-	pop bp
-	ret
 
 ;void makeInterrupt21()
 ;this sets up the interrupt 0x21 vector
